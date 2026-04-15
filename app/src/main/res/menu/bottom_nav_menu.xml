@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="Trang chủ" />
+
+    <item
+        android:id="@+id/chartFragment"
+        android:icon="@drawable/ic_chart"
+        android:title="Biểu đồ" />
+
+    <item
+        android:id="@+id/controlFragment"
+        android:icon="@drawable/ic_led"
+        android:title="Điều khiển" />
+
+    <item
+        android:id="@+id/notificationFragment"
+        android:icon="@drawable/ic_bell"
+        android:title="Thông báo" />
+
+</menu>
