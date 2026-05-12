@@ -1,5 +1,6 @@
 package com.example.greenhousesystem.ui
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.greenhousesystem.model.*
 import com.google.firebase.auth.FirebaseAuth
@@ -60,6 +61,8 @@ class SharedDeviceViewModel : ViewModel() {
     private var ledListener: ValueEventListener? = null
     private var plantListener: ValueEventListener? = null
     private var thresholdListener: ValueEventListener? = null
+    private var savedUid: String? = null
+
 
     init {
         startListening()
@@ -70,6 +73,7 @@ class SharedDeviceViewModel : ViewModel() {
      * Gọi 1 lần trong init{}, các listener tự cập nhật StateFlow khi có data.
      */
     fun startListening() {
+        savedUid = uid
         listenSensor()
         listenDeviceStatus()
         listenLedStatus()
@@ -90,7 +94,13 @@ class SharedDeviceViewModel : ViewModel() {
                 _sensorData.value = data
                 checkAlerts(data)   // tự động kiểm tra ngưỡng mỗi khi có data mới
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                // Emit trạng thái offline để UI phản ứng
+                _deviceStatus.value = DeviceStatus(status = "offline", lastSeen = 0L)
+                // Log để debug
+                Log.e("Firebase", "Listener cancelled: ${error.message}")
+            }
+
         }
         db.child("sensors").addValueEventListener(sensorListener!!)
     }
@@ -106,7 +116,13 @@ class SharedDeviceViewModel : ViewModel() {
                     lastSeen = snapshot.child("lastSeen").getValue(Long::class.java) ?: 0L
                 )
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                // Emit trạng thái offline để UI phản ứng
+                _deviceStatus.value = DeviceStatus(status = "offline", lastSeen = 0L)
+                // Log để debug
+                Log.e("Firebase", "Listener cancelled: ${error.message}")
+            }
+
         }
         db.child("devices").addValueEventListener(deviceListener!!)
     }
@@ -117,15 +133,28 @@ class SharedDeviceViewModel : ViewModel() {
     private fun listenLedStatus() {
         ledListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val isOnRaw = snapshot.child("isOn").value
+                val parsedIsOn = when (isOnRaw) {
+                    is Boolean -> isOnRaw
+                    is String -> isOnRaw == "true"
+                    is Number -> isOnRaw.toInt() == 1
+                    else -> false
+                }
                 _ledStatus.value = LedStatus(
-                    isOn  = snapshot.child("isOn").getValue(Boolean::class.java) ?: false,
+                    isOn  = parsedIsOn,
                     red   = snapshot.child("red").getValue(Int::class.java) ?: 0,
                     green = snapshot.child("green").getValue(Int::class.java) ?: 0,
                     blue  = snapshot.child("blue").getValue(Int::class.java) ?: 0,
                     mode  = snapshot.child("mode").getValue(String::class.java) ?: "MANUAL"
                 )
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                // Emit trạng thái offline để UI phản ứng
+                _deviceStatus.value = DeviceStatus(status = "offline", lastSeen = 0L)
+                // Log để debug
+                Log.e("Firebase", "Listener cancelled: ${error.message}")
+            }
+
         }
         db.child("devices").child("led").addValueEventListener(ledListener!!)
     }
@@ -212,8 +241,16 @@ class SharedDeviceViewModel : ViewModel() {
     //  LED CONTROL — Toggle và apply màu/mode
     // ─────────────────────────────────────────────────────────────────────
     fun toggleLed(isOn: Boolean) {
-        db.child("devices").child("led").child("isOn").setValue(isOn)
-    }
+        val updates = mapOf("isOn" to isOn)
+        db.child("devices").child("led").updateChildren(updates)
+            .addOnSuccessListener {
+                // Nếu thành công, Android Studio sẽ in dòng này ra tab Logcat
+                Log.d("FIREBASE_LED", "✅ Đã gửi lệnh thành công. isOn mới = $isOn")
+            }
+            .addOnFailureListener { error ->
+                // Nếu Firebase từ chối, nó sẽ báo rõ lý do tại đây
+                Log.e("FIREBASE_LED", "❌ Lỗi không thể đổi trạng thái: ${error.message}")
+            }    }
 
     fun applyLedMode(mode: LedMode) {
         val updates = mapOf(
@@ -224,7 +261,8 @@ class SharedDeviceViewModel : ViewModel() {
     }
 
     fun applyManualColor(r: Int, g: Int, b: Int) {
-        val updates = mapOf("mode" to "MANUAL", "red" to r, "green" to g, "blue" to b)
+        val updates = mapOf("mode" to "MANUAL", "red" to r, "green" to g, "blue" to b, "isOn" to true)
+
         db.child("devices").child("led").updateChildren(updates)
     }
 
@@ -264,11 +302,12 @@ class SharedDeviceViewModel : ViewModel() {
         sensorListener?.let { db.child("sensors").removeEventListener(it) }
         deviceListener?.let { db.child("devices").removeEventListener(it) }
         ledListener?.let { db.child("devices").child("led").removeEventListener(it) }
-        if (uid.isNotEmpty()) {
+        savedUid?.let { uid ->
             plantListener?.let {
                 db.child("users").child(uid).child("selectedPlant").removeEventListener(it)
             }
         }
+
     }
 }
 

@@ -1,0 +1,77 @@
+{
+    "GreenHouseSystem": {
+        "users": {},
+        "devices": {
+            "led": {
+                "isOn": false,
+                "mode": "MANUAL",
+                "red": 0,
+                "green": 0,
+                "blue": 0
+            }
+        },
+        "sensors": {
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "timestamp": 0
+        },
+        "sensorHistory": {},
+        "notifications": {},
+        "plantProfiles": {
+            "LEAFY_VEGGIE": {
+                "name": "Rau ăn lá",
+                "icon": "🥬",
+                "tempMin": 15,
+                "tempMax": 30,
+                "humidityMin": 60,
+                "humidityMax": 85,
+                "recommendedLedMode": "VEGETATIVE"
+            },
+            "TOMATO": {
+                "name": "Cà chua",
+                "icon": "🍅",
+                "tempMin": 18,
+                "tempMax": 32,
+                "humidityMin": 55,
+                "humidityMax": 80,
+                "recommendedLedMode": "FLOWERING"
+            },
+            "CHILI": {
+                "name": "Ớt",
+                "icon": "🌶️",
+                "tempMin": 20,
+                "tempMax": 35,
+                "humidityMin": 50,
+                "humidityMax": 75,
+                "recommendedLedMode": "FRUITING"
+            },
+            "CUCUMBER": {
+                "name": "Dưa leo",
+                "icon": "🥒",
+                "tempMin": 22,
+                "tempMax": 35,
+                "humidityMin": 60,
+                "humidityMax": 85,
+                "recommendedLedMode": "FLOWERING"
+            },
+            "STRAWBERRY": {
+                "name": "Dâu tây",
+                "icon": "🍓",
+                "tempMin": 15,
+                "tempMax": 26,
+                "humidityMin": 60,
+                "humidityMax": 80,
+                "recommendedLedMode": "FRUITING"
+            },
+            "HERB": {
+                "name": "Thảo mộc",
+                "icon": "🌿",
+                "tempMin": 18,
+                "tempMax": 30,
+                "humidityMin": 50,
+                "humidityMax": 70,
+                "recommendedLedMode": "VEGETATIVE"
+            }
+        }
+    }
+}

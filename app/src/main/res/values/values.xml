@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">209264851991</string>
+    <string name="google_api_key" translatable="false">AIzaSyBiGw33P9_giJzGwqn8-U6vAVVtnA8ucAI</string>
+    <string name="google_app_id" translatable="false">1:209264851991:android:22dde0ba4f65e18c58b052</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBiGw33P9_giJzGwqn8-U6vAVVtnA8ucAI</string>
+    <string name="google_storage_bucket" translatable="false">greenhousesystem-97224.firebasestorage.app</string>
+    <string name="project_id" translatable="false">greenhousesystem-97224</string>
+</resources>

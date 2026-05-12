@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    activity_splash.xml — FIX:
-    Lỗi gốc: layout_constraintVerticalBias / layout_constraintVerticalChainStyle
-    "not found" vì các attribute này là của ConstraintLayout library nhưng
-    namespace xmlns:app chưa được khai báo đúng ở root, HOẶC root view
-    không phải ConstraintLayout.
-
-    Fix: Đảm bảo root là androidx.constraintlayout.widget.ConstraintLayout
-    với đầy đủ xmlns:app="http://schemas.android.com/apk/res-auto"
-    Các child view có layout_constraint* phải nằm TRỰC TIẾP trong ConstraintLayout.
-    View nằm trong LinearLayout/FrameLayout con KHÔNG dùng được constraint attributes.
--->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -29,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVerticalBias="0.38"/>
+        app:layout_constraintVertical_bias="0.38"/>
 
     <!-- Particle decoration -->
     <ImageView
@@ -42,14 +30,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!--
-        CHAIN DỌC: lottieSplash → tvSplashAppName → tvSplashTagline
-        Dùng packed chain + verticalBias để nhóm 3 view này
-        nằm ở ~40% từ trên xuống (thay vì chính giữa).
-
-        ✅ FIX: Khai báo chain bằng cách set constraint hai chiều
-        giữa các view trong chain, sau đó set chainStyle trên view đầu tiên.
-    -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieSplash"
         android:layout_width="140dp"
@@ -65,8 +45,8 @@
         app:layout_constraintBottom_toTopOf="@id/tvSplashAppName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVerticalChainStyle="packed"
-        app:layout_constraintVerticalBias="0.38"/>
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintVertical_bias="0.38"/>
 
     <TextView
         android:id="@+id/tvSplashAppName"
@@ -101,7 +81,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Loading bar: không nằm trong chain → dùng bias riêng -->
+    <!-- Loading bar -->
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/splashLoadingBar"
         android:layout_width="160dp"
@@ -116,9 +96,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVerticalBias="0.3"/>
+        app:layout_constraintVertical_bias="0.3"/>
 
-    <!-- Version text góc dưới phải -->
+    <!-- Version text -->
     <TextView
         android:id="@+id/tvSplashVersion"
         android:layout_width="wrap_content"

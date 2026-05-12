@@ -86,14 +86,16 @@ class ControlFragment : Fragment() {
     // ─────────────────────────────────────────────────────────────────
     private fun setupPowerButton() {
         binding.btnPower.setOnClickListener {
-            if (!isUpdatingFromCode) {
-                val newState = !isLedOn
-                // ✅ Gọi SharedDeviceViewModel, không phải ControlViewModel
-                sharedViewModel.toggleLed(newState)
-                // Cập nhật UI ngay lập tức (optimistic update)
-                // StateFlow sẽ confirm lại sau khi Firebase phản hồi
-                updatePowerUi(newState)
-            }
+            // 1. Tính toán trạng thái ngược lại (Đang sáng -> Tắt)
+            val currentOnState = sharedViewModel.ledStatus.value.isOn
+            val newState = !currentOnState
+
+            // 2. Gửi lệnh lên Firebase
+            sharedViewModel.toggleLed(newState)
+
+            // 3. Cập nhật lại màu của nút ngay lập tức
+            updatePowerUi(newState)
+
         }
     }
 

@@ -7,6 +7,7 @@ enum class LedMode(
     val red: Int,
     val green: Int,
     val blue: Int
+
 ) {
     GERMINATION(
         displayName = "Nảy mầm",

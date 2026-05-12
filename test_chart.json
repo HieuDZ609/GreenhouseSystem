@@ -1,0 +1,52 @@
+{
+    "record_001": {
+        "temperature": 28.5,
+        "humidity": 65.0,
+        "timestamp": 1720000000
+    },
+    "record_002": {
+        "temperature": 28.7,
+        "humidity": 64.0,
+        "timestamp": 1720000060
+    },
+    "record_003": {
+        "temperature": 29.1,
+        "humidity": 63.5,
+        "timestamp": 1720000120
+    },
+    "record_004": {
+        "temperature": 29.5,
+        "humidity": 60.0,
+        "timestamp": 1720000180
+    },
+    "record_005": {
+        "temperature": 29.2,
+        "humidity": 62.0,
+        "timestamp": 1720000240
+    },
+    "record_006": {
+        "temperature": 28.8,
+        "humidity": 65.5,
+        "timestamp": 1720000300
+    },
+    "record_007": {
+        "temperature": 28.4,
+        "humidity": 67.0,
+        "timestamp": 1720000360
+    },
+    "record_008": {
+        "temperature": 28.1,
+        "humidity": 68.0,
+        "timestamp": 1720000420
+    },
+    "record_009": {
+        "temperature": 27.9,
+        "humidity": 69.5,
+        "timestamp": 1720000480
+    },
+    "record_010": {
+        "temperature": 28.2,
+        "humidity": 66.0,
+        "timestamp": 1720000540
+    }
+}
