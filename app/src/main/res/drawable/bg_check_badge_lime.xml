@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_check_badge_lime.xml — Badge ✓ màu lime góc phải trên card cây được chọn -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#CCFF00"/>
+</shape>

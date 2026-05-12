@@ -1,9 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="green_primary">#2E7D32</color>
-    <color name="green_light">#A5D6A7</color>
+    <color name="deep_forest">#064E3B</color>
+    <color name="deep_forest_dark">#022C22</color>
+    <color name="lime_neon">#84CC16</color>
+    <color name="glass_white">#1AFFFFFF</color>
+    <color name="glass_dark">#1A2D1E</color>
+    <color name="border_green">#2D4A31</color>
+
+    <!-- ══ PRIMARY PALETTE ══ -->
+    <color name="green_primary">#CCFF00</color>       <!-- Lime accent chính -->
+    <color name="green_dark">#84CC16</color>           <!-- Lime tối hơn -->
+    <color name="green_deep">#065F46</color>           <!-- Forest green -->
+    <color name="background_dark">#0F1E12</color>      <!-- Nền trang chính -->
+    <color name="background_darker">#070E08</color>    <!-- Nền tối nhất (splash) -->
+    <color name="surface_dark">#1A2D1E</color>         <!-- Surface card -->
+    <color name="stroke_dark">#2D4A31</color>          <!-- Viền card dark -->
+
+    <!-- ══ TEXT COLORS ══ -->
+    <color name="text_primary">#E8F5E9</color>         <!-- Text chính (trắng ngà) -->
+    <color name="text_secondary">#4A8C52</color>       <!-- Text phụ (xanh nhạt) -->
+    <color name="text_hint">#2D4A31</color>            <!-- Hint text rất mờ -->
+    <color name="text_lime">#CCFF00</color>            <!-- Text accent lime -->
+
+    <!-- ══ SEMANTIC COLORS ══ -->
+    <color name="color_online">#CCFF00</color>         <!-- Thiết bị Online -->
+    <color name="color_offline">#4A5A4E</color>        <!-- Thiết bị Offline -->
+    <color name="color_temp_high">#EF5350</color>      <!-- Nhiệt độ cao (cảnh báo) -->
+    <color name="color_temp_low">#64B5F6</color>       <!-- Nhiệt độ thấp -->
+    <color name="color_humid">#42A5F5</color>          <!-- Độ ẩm -->
+    <color name="color_warning">#FFB300</color>        <!-- Warning amber -->
+    <color name="color_error">#8B1A1A</color>          <!-- Error background -->
+    <color name="color_error_text">#FFCDD2</color>     <!-- Error text -->
+
+    <!-- ══ CARD COLORS ══ -->
+    <color name="card_bg_dark">#0F1E12</color>
+    <color name="card_bg_temp">#0F1E12</color>
+    <color name="card_bg_humid">#0D1A2A</color>
+    <color name="card_selected_bg">#0A2010</color>     <!-- Card được chọn (plant) -->
+    <color name="card_stroke_dark">#1E3B22</color>
+    <color name="lime_accent">#CCFF00</color>          <!-- Alias cho CCFF00 -->
+
+    <!-- ══ LEGACY COLORS (giữ để tương thích) ══ -->
     <color name="white">#FFFFFF</color>
-    <color name="black">#212121</color>
+    <color name="black">#000000</color>
     <color name="gray">#9E9E9E</color>
     <color name="red">#D32F2F</color>
+    <color name="green_light">#A5D6A7</color>
+
 </resources>

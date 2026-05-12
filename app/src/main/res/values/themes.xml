@@ -1,9 +1,111 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.GreenhouseSystem" parent="Theme.Material3.DayNight.NoActionBar">
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    themes.xml — Theme chính và các style component
+    ─────────────────────────────────────────────────
+    Kế thừa từ Theme.Material3.DayNight.NoActionBar để:
+    - Tắt ActionBar mặc định (dùng custom Toolbar)
+    - Hỗ trợ Material 3 components (Chip, Slider, FAB...)
+
+    Styles quan trọng:
+    - CircleImageView   : ShapeableImageView hình tròn + viền lime
+    - DarkDialogStyle   : Dialog trong suốt nền tối cho PlantPickerDialog
+    - LimeButton        : Button gradient lime tùy chỉnh
+-->
+<resources>
+
+    <!-- ══ APP THEME CHÍNH ══ -->
+    <style name="Theme.GreenhouseSystem" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Màu primary theo Material 3 color roles -->
         <item name="colorPrimary">@color/green_primary</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">#0F1E12</item>
+        <item name="colorPrimaryContainer">#1A2D1E</item>
+        <item name="colorOnPrimaryContainer">#CCFF00</item>
+        <item name="colorSecondary">#4A8C52</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSurface">#0F1E12</item>
+        <item name="colorOnSurface">#E8F5E9</item>
+        <item name="android:colorBackground">#0F1E12</item>
+        <item name="colorBackgroundFloating">#0F1E12</item>
+        <item name="colorOnBackground">#E8F5E9</item>
+        <item name="colorError">#EF5350</item>
+
+        <!-- Status bar + navigation bar tối để hòa với theme -->
+        <item name="android:statusBarColor">#070E08</item>
+        <item name="android:navigationBarColor">#0F1E12</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Font mặc định cho toàn app (nếu đã add Montserrat vào res/font) -->
+        <!-- <item name="fontFamily">@font/montserrat_medium</item> -->
     </style>
 
-    <style name="Theme.GreenhouseSystem" parent="Base.Theme.GreenhouseSystem" />
+    <!-- ══ SPLASH SCREEN THEME (fullscreen, không ActionBar) ══ -->
+    <style name="Theme.GreenhouseSystem.Splash" parent="Theme.GreenhouseSystem">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">#070E08</item>
+        <item name="android:navigationBarColor">#070E08</item>
+    </style>
+
+    <!-- ══ CircleImageView ══
+         Style cho ShapeableImageView hiển thị avatar hình tròn.
+         Dùng: app:shapeAppearanceOverlay="@style/CircleImageView"
+
+         ShapeAppearanceModel với cornerFamily = rounded + cornerSize = 50%
+         tạo hình tròn hoàn hảo bất kể kích thước ảnh.
+         Viền lime 1dp được set qua app:strokeColor và app:strokeWidth trong XML.
+    ══ -->
+    <style name="CircleImageView" parent="">
+        <!-- cornerFamily = rounded, cornerSize = 50% = hình tròn hoàn hảo -->
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- ══ DarkDialogStyle ══
+         Dialog theme tối cho PlantPickerDialog và các popup.
+         Background trong suốt để card MaterialCardView hiện bo góc.
+         Nền dialog màu eco-dark thay vì trắng mặc định.
+    ══ -->
+    <style name="DarkDialogStyle" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">#0F1E12</item>
+        <item name="colorOnSurface">#E8F5E9</item>
+        <item name="colorPrimary">#CCFF00</item>
+        <item name="android:background">@android:color/transparent</item>
+        <!-- Title text màu trắng ngà -->
+        <item name="materialAlertDialogTitleTextStyle">
+            @style/DarkDialog.TitleText
+        </item>
+        <!-- Button text màu lime -->
+        <item name="buttonBarNegativeButtonStyle">
+            @style/DarkDialog.NegativeButton
+        </item>
+    </style>
+
+    <style name="DarkDialog.TitleText" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textColor">#E8F5E9</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+    </style>
+
+    <style name="DarkDialog.NegativeButton" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">#4A8C52</item>
+    </style>
+
+    <!-- ══ TextInputLayout Dark Style ══
+         Override màu cho TextInputLayout trong dark mode.
+         Tránh màu outline xanh mặc định của Material3.
+    ══ -->
+    <style name="DarkTextInputLayout"
+        parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">#2D4A31</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="boxBackgroundColor">#0A1A0A</item>
+    </style>
+
+    <!-- ══ Chip Dark Style ══ -->
+    <style name="DarkChipFilter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_bg_color_dark</item>
+        <item name="android:textColor">@color/chip_text_color_dark</item>
+        <item name="chipStrokeColor">#2D4A31</item>
+        <item name="chipStrokeWidth">1dp</item>
+    </style>
+
 </resources>

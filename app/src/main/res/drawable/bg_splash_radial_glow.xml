@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_splash_radial_glow.xml — Vầng sáng radial xanh ở tâm splash screen -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="150dp"
+        android:startColor="#40CCFF00"
+        android:endColor="#00CCFF00"/>
+</shape>

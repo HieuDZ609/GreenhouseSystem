@@ -16,7 +16,7 @@ import java.util.Locale
 
 class NotificationAdapter(
     private val onItemClick: (Notification) -> Unit,
-    private val onItemDelete: (Notification) -> Unit
+    private val onItemDelete: (Notification) -> Unit // Exposed for Swipe-to-delete
 ) : ListAdapter<Notification, NotificationAdapter.ViewHolder>(DiffCallback()) {
 
     inner class ViewHolder(
@@ -24,43 +24,39 @@ class NotificationAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(notification: Notification) {
-            // Icon theo type
-            binding.tvTypeIcon.text = when (notification.type) {
-                "TEMPERATURE" -> "🌡️"
-                "HUMIDITY" -> "💧"
-                "DEVICE" -> "📡"
-                else -> "🔔"
+            // Icon + màu nền biểu tượng theo loại cảnh báo (Eco-Digital Theme)
+            val (iconTxt, bgColor) = when (notification.type) {
+                "TEMPERATURE" -> "🌡️" to "#33FF4B4B" // Red Tint
+                "HUMIDITY"    -> "💧" to "#330D47A1" // Blue Tint
+                "DEVICE"      -> "📡" to "#33CCFF00" // Lime Tint
+                else          -> "🔔" to "#33A0B8A8" // Gray Tint
             }
 
-            // Background icon theo type
-            val bgColor = when (notification.type) {
-                "TEMPERATURE" -> "#FFEBEE"
-                "HUMIDITY" -> "#E3F2FD"
-                "DEVICE" -> "#F3E5F5"
-                else -> "#F5F5F5"
-            }
+            binding.tvTypeIcon.text = iconTxt
+            // Giả sử tvTypeIcon của bạn là một ShapeableImageView hoặc View có nền bo tròn
+            // Hãy dùng GradientDrawable nếu cần tạo hình tròn, ở đây dùng parseColor trực tiếp
             binding.tvTypeIcon.setBackgroundColor(Color.parseColor(bgColor))
 
             binding.tvTitle.text = notification.title
             binding.tvMessage.text = notification.message
             binding.tvTimestamp.text = formatTime(notification.timestamp)
 
-            // Trạng thái đọc
+            // Kiểm tra trạng thái đã đọc để thay đổi font chữ và điểm màu (Indicator)
             if (notification.isRead) {
                 binding.tvReadStatus.text = "✓ Đã đọc"
-                binding.tvReadStatus.setTextColor(Color.parseColor("#9E9E9E"))
+                binding.tvReadStatus.setTextColor(Color.parseColor("#A0B8A8")) // Xám nhạt
                 binding.tvTitle.setTypeface(null, Typeface.NORMAL)
-                binding.viewUnreadIndicator.visibility = View.INVISIBLE
-                binding.root.setCardBackgroundColor(Color.WHITE)
+                binding.viewTypeIndicator.visibility = View.INVISIBLE
+                binding.root.setCardBackgroundColor(Color.parseColor("#1AFFFFFF")) // Glass effect default
             } else {
                 binding.tvReadStatus.text = "● Chưa đọc"
-                binding.tvReadStatus.setTextColor(Color.parseColor("#2E7D32"))
+                binding.tvReadStatus.setTextColor(Color.parseColor("#CCFF00")) // Lime green
                 binding.tvTitle.setTypeface(null, Typeface.BOLD)
-                binding.viewUnreadIndicator.visibility = View.VISIBLE
-                binding.root.setCardBackgroundColor(Color.parseColor("#F9FBE7"))
+                binding.viewTypeIndicator.visibility = View.VISIBLE
+                binding.root.setCardBackgroundColor(Color.parseColor("#26CCFF00")) // Hơi sáng lên
             }
 
-            // Click để xem chi tiết + đánh dấu đọc
+            // Bắt sự kiện click vào Card
             binding.root.setOnClickListener {
                 onItemClick(notification)
             }
@@ -68,8 +64,7 @@ class NotificationAdapter(
 
         private fun formatTime(timestamp: Long): String {
             if (timestamp == 0L) return "--"
-            return SimpleDateFormat("HH:mm · dd/MM/yyyy", Locale.getDefault())
-                .format(Date(timestamp))
+            return SimpleDateFormat("HH:mm · dd/MM/yyyy", Locale.getDefault()).format(Date(timestamp))
         }
     }
 
@@ -84,13 +79,16 @@ class NotificationAdapter(
         holder.bind(getItem(position))
     }
 
-    // Expose để ItemTouchHelper gọi khi swipe
+    // Expose đối tượng để ItemTouchHelper trong Fragment biết đang thao tác với Notification nào.
     fun getItemAt(position: Int): Notification = getItem(position)
 
     class DiffCallback : DiffUtil.ItemCallback<Notification>() {
-        override fun areItemsTheSame(old: Notification, new: Notification) =
-            old.id == new.id
-        override fun areContentsTheSame(old: Notification, new: Notification) =
-            old == new
+        override fun areItemsTheSame(oldItem: Notification, newItem: Notification): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Notification, newItem: Notification): Boolean {
+            return oldItem == newItem
+        }
     }
 }

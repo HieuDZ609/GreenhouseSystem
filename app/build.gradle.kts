@@ -89,13 +89,20 @@ dependencies {
         // MPAndroidChart
         implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
-
         // DrawerLayout
         implementation("androidx.drawerlayout:drawerlayout:1.2.0")
 
         // SwipeRefreshLayout
         implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
 
+        // FCM
+        implementation("com.google.firebase:firebase-messaging")
+
+        // WorkManager — chạy background task ổn định
+        implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+        // Shimmer of Facebook
+        implementation("com.facebook.shimmer:shimmer:0.5.0")
     implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-database")

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_nav_header_gradient.xml
+    Gradient dọc cho header của NavigationDrawer.
+    Từ #0F1E12 (eco dark) xuống #064E3B (deep forest green).
+    Tạo cảm giác chiều sâu và phân biệt rõ header với menu items.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="270"
+        android:startColor="#0F1E12"
+        android:centerColor="#0A2818"
+        android:endColor="#064E3B"/>
+</shape>

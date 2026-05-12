@@ -3,7 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/homeFragment">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         GLOBAL ACTION: Cho phép navigate về Login từ bất kỳ Fragment nào.
+         popUpTo="@id/nav_graph" + inclusive="true" giúp xóa sạch
+         backstack để user không thể nhấn Back quay lại Dashboard.
+         ══════════════════════════════════════════════════════════════ -->
+    <action
+        android:id="@+id/action_global_to_login"
+        app:destination="@id/loginFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
 
     <!-- Màn hình Login -->
     <fragment
@@ -37,25 +50,53 @@
             app:popUpToInclusive="true" />
     </fragment>
 
+    <!-- Màn hình Home -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.greenhousesystem.ui.home.HomeFragment"
-        android:label="" />
+        android:label=""
+        tools:layout="@layout/fragment_home">
+
+        <!-- Action dùng khi khởi động app mà chưa đăng nhập -->
+        <action
+            android:id="@+id/action_home_to_login"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/chartFragment"
         android:name="com.example.greenhousesystem.ui.chart.ChartFragment"
-        android:label="Biểu đồ" />
+        android:label="Biểu đồ"
+        tools:layout="@layout/fragment_chart" />
 
     <fragment
         android:id="@+id/controlFragment"
         android:name="com.example.greenhousesystem.ui.control.ControlFragment"
-        android:label="Điều khiển" />
+        android:label="Điều khiển"
+        tools:layout="@layout/fragment_control" />
 
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.example.greenhousesystem.ui.notification.NotificationFragment"
-        android:label="Thông báo" />
+        android:label="Thông báo"
+        tools:layout="@layout/fragment_notification" />
 
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.greenhousesystem.ui.drawer.AccountFragment"
+        android:label="Thông tin tài khoản"
+        tools:layout="@layout/fragment_account">
+        <action
+            android:id="@+id/action_account_to_back"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/thresholdFragment"
+        android:name="com.example.greenhousesystem.ui.drawer.ThresholdFragment"
+        android:label="Ngưỡng cảnh báo"
+        tools:layout="@layout/fragment_threshold" />
 
 </navigation>

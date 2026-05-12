@@ -1,138 +1,293 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  fragment_login_new.xml — Landing Page / Login              ║
+    ║  Theme: Tối giản, pastel, animation trang nhã              ║
+    ║  Hiệu ứng: Parallax scroll, chữ slide-up, liquid button    ║
+    ║  Chuyển cảnh: Shared Element Transition sang Dashboard      ║
+    ╚══════════════════════════════════════════════════════════════╝
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fillViewport="true"
-    android:isScrollContainer="true">
+    android:background="@drawable/bg_login_gradient">
 
-    <LinearLayout
+    <!--
+        NestedScrollView để hỗ trợ Parallax scroll với AppBarLayout.
+        Khi user cuộn xuống, hero section sẽ thu nhỏ dần.
+    -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="28dp"
-        android:gravity="center_horizontal">
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="48dp"
-            android:src="@drawable/ic_greenhouse" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="GreenHouse System"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="36dp"
-            android:text="Đăng nhập để tiếp tục"
-            android:textSize="14sp"
-            android:textColor="@color/gray" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilEmail"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Email"
-            app:startIconDrawable="@drawable/ic_email"
-            app:boxCornerRadiusTopStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusBottomEnd="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#212121"
-                android:textColorHint="#757575"
-                android:textStyle="bold"
-                android:inputType="textEmailAddress"
-                android:imeOptions="actionNext" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPassword"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="Mật khẩu"
-            app:startIconDrawable="@drawable/ic_lock"
-            app:endIconMode="password_toggle"
-            app:boxCornerRadiusTopStart="8dp"
-            app:boxCornerRadiusTopEnd="8dp"
-            app:boxCornerRadiusBottomStart="8dp"
-            app:boxCornerRadiusBottomEnd="8dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#212121"
-                android:textColorHint="#757575"
-                android:textStyle="bold"
-                android:inputType="textPassword"
-                android:imeOptions="actionDone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tvForgotPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginBottom="24dp"
-            android:text="Quên mật khẩu?"
-            android:textColor="@color/green_primary" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Đăng nhập"
-            android:textSize="16sp"
-            app:cornerRadius="12dp" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieLoading"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:lottie_rawRes="@raw/loading"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true" />
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chưa có tài khoản? "
-                android:textColor="@color/gray" />
+            <!-- ══════════════════════════════════════════════
+                 HERO SECTION — Parallax Layer
+                 Logo + tagline với parallax effect.
+                 Được implement bằng NestedScrollView.OnScrollChangeListener
+                 trong LoginFragment: translationY = -scrollY * 0.4f
+                 ══════════════════════════════════════════════ -->
+            <FrameLayout
+                android:id="@+id/layoutHero"
+                android:layout_width="match_parent"
+                android:layout_height="280dp">
 
-            <TextView
-                android:id="@+id/tvGoToRegister"
-                android:layout_width="wrap_content"
+                <!-- Background particle decoration (SVG animated drawable) -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/bg_hero_particles"
+                    android:scaleType="centerCrop"
+                    android:alpha="0.3"/>
+
+                <!-- Hero content — slide-in từ dưới lên khi load -->
+                <LinearLayout
+                    android:id="@+id/layoutHeroContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:alpha="0"
+                    android:translationY="30dp">
+                    <!-- alpha=0, translationY=30dp ban đầu
+                         → animate đến alpha=1, translationY=0 -->
+
+                    <!--
+                        Logo icon với Lottie plant animation.
+                        Shared element key: "logo" để Transition
+                        sang Dashboard mượt mà.
+                    -->
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieLogo"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:transitionName="logo"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/plant_growing"/>
+
+                    <!-- App name — chữ to, font Montserrat Bold -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="GreenHouse"
+                        android:textSize="36sp"
+                        android:textStyle="bold"
+                        android:textColor="#1B4332"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:letterSpacing="-0.02"/>
+
+                    <!-- Tagline — fade in với delay 200ms -->
+                    <TextView
+                        android:id="@+id/tvTagline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Make plant perfect ✦"
+                        android:textSize="14sp"
+                        android:textColor="#52796F"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:letterSpacing="0.06"
+                        android:alpha="0"/>
+                    <!-- Fade in delay 200ms sau khi hero animate -->
+
+                </LinearLayout>
+            </FrameLayout>
+
+            <!-- ══════════════════════════════════════════════
+                 FORM CARD — Glassmorphic nổi lên từ dưới
+                 Bo góc trên lớn (32dp) tạo cảm giác sheet overlay.
+                 Slide-up animation: translationY 100→0, fade 0→1
+                 ══════════════════════════════════════════════ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLoginForm"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Đăng ký ngay"
-                android:textColor="@color/green_primary"
-                android:textStyle="bold" />
+                android:layout_marginTop="-24dp"
+                android:translationY="60dp"
+                android:alpha="0"
+                app:cardBackgroundColor="#FAFAF8"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E8F5E0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="32dp"
+                    android:paddingTop="36dp"
+                    android:gravity="center_horizontal">
+
+                    <!-- Tiêu đề form -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đăng nhập"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:textColor="#1B4332"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chào mừng trở lại!"
+                        android:textSize="14sp"
+                        android:textColor="#74A98A"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:layout_marginBottom="32dp"/>
+
+                    <!-- ── Email Field ── -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilEmail"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:hint="Email"
+                        app:startIconDrawable="@drawable/ic_email"
+                        app:startIconTint="#84CC16"
+                        app:boxStrokeColor="@color/input_stroke_color"
+                        app:boxBackgroundColor="#F5FAF5"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:hintTextColor="#74A98A">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#1B4332"
+                            android:textColorHint="#A0B8A8"
+                            android:inputType="textEmailAddress"
+                            android:imeOptions="actionNext"
+                            android:fontFamily="@font/montserrat_medium"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- ── Password Field ── -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPassword"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Mật khẩu"
+                        app:startIconDrawable="@drawable/ic_lock"
+                        app:startIconTint="#84CC16"
+                        app:endIconMode="password_toggle"
+                        app:endIconTint="#74A98A"
+                        app:boxStrokeColor="@color/input_stroke_color"
+                        app:boxBackgroundColor="#F5FAF5"
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:hintTextColor="#74A98A">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#1B4332"
+                            android:textColorHint="#A0B8A8"
+                            android:inputType="textPassword"
+                            android:imeOptions="actionDone"
+                            android:fontFamily="@font/montserrat_medium"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Quên mật khẩu -->
+                    <TextView
+                        android:id="@+id/tvForgotPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Quên mật khẩu?"
+                        android:textColor="#52796F"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:gravity="end"
+                        android:layout_marginBottom="28dp"/>
+
+                    <!--
+                        Nút Đăng nhập — "Liquid Button" Effect.
+                        Khi nhấn: ripple dạng gợn sóng từ điểm chạm,
+                        scale xuống 0.96 rồi spring back lên 1.0.
+                        Background: lime gradient (#84CC16 → #65A30D).
+                    -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:text="Đăng nhập"
+                        android:textSize="16sp"
+                        android:textColor="#FAFAF8"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:letterSpacing="0.04"
+                        app:backgroundTint="#84CC16"
+                        app:cornerRadius="20dp"
+                        app:rippleColor="#33FFFFFF"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Lottie loading (thay thế button khi đang login) -->
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieLoading"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:visibility="gone"
+                        app:lottie_rawRes="@raw/loading"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"/>
+
+                    <!-- Link sang Register -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chưa có tài khoản?  "
+                            android:textColor="#74A98A"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/montserrat_medium"/>
+
+                        <TextView
+                            android:id="@+id/tvGoToRegister"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Đăng ký"
+                            android:textColor="#1B4332"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/montserrat_bold"/>
+                    </LinearLayout>
+
+                    <!-- Bottom spacer để không bị keyboard che -->
+                    <Space
+                        android:layout_width="1dp"
+                        android:layout_height="24dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

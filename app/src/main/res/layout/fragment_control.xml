@@ -1,381 +1,495 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  fragment_control_new.xml — LED Control "Color Orbit" Screen║
+    ║  Theme: Eco-Digital Dark Mode                               ║
+    ║  Điểm nhấn: Color Orbit wheel cho RGB, preset card tint     ║
+    ║  background khi chọn mode, spring physics animation.        ║
+    ╚══════════════════════════════════════════════════════════════╝
+-->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@drawable/bg_eco_dark"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="40dp"
+        android:paddingHorizontal="16dp">
 
-        <!-- ═══ CARD BẬT/TẮT LED ═══ -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- ══════════════════════════════════════════════
+             HEADER: Title + Power Switch
+             ══════════════════════════════════════════════ -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <!-- Row: Switch + Preview màu -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <!-- Preview màu LED (hình tròn) -->
-                    <View
-                        android:id="@+id/viewLedPreview"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:background="@drawable/circle_gray" />
-
-                    <!-- Tên mode + màu hex -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="16dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Đèn LED RGB"
-                            android:textSize="12sp"
-                            android:textColor="@color/gray" />
-
-                        <TextView
-                            android:id="@+id/tvCurrentMode"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="-- Chưa có dữ liệu"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/black" />
-
-                        <TextView
-                            android:id="@+id/tvColorHex"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="R:0 G:0 B:0"
-                            android:textSize="12sp"
-                            android:textColor="@color/gray" />
-
-                    </LinearLayout>
-
-                    <!-- Switch bật/tắt -->
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/switchLed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleX="1.2"
-                        android:scaleY="1.2"
-                        android:thumbTint="@color/green_primary"
-                        android:trackTint="@color/green_light" />
-
-                </LinearLayout>
-
-                <!-- Loading bar -->
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/progressLed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:visibility="gone"
-                    app:indicatorColor="@color/green_primary"
-                    app:trackColor="#E8F5E9" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- ═══ CARD PRESET MODE ═══ -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardPreset"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Chế độ chiếu sáng"
-                    android:textSize="15sp"
+                    android:text="Điều khiển"
+                    android:textSize="12sp"
+                    android:textColor="#4A8C52"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:letterSpacing="0.1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đèn LED RGB"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_marginBottom="12dp" />
+                    android:textColor="#E8F5E9"
+                    android:fontFamily="@font/montserrat_bold"/>
 
-                <!-- Row 1: Nảy mầm + Phát triển lá -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
+            </LinearLayout>
 
-                    <!-- Nảy mầm -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardGermination"
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="1dp"
-                        app:strokeWidth="2dp"
-                        app:strokeColor="@color/gray">
+            <!--
+                Power button tròn với outer ring glow.
+                Khi LED ON: ring phát sáng lime (#84CC16).
+                Khi LED OFF: ring mờ xám.
+                Animation: scale 0.9→1.1 khi nhấn (spring).
+            -->
+            <FrameLayout
+                android:layout_width="64dp"
+                android:layout_height="64dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:padding="8dp">
+                <!-- Vòng glow ngoài -->
+                <View
+                    android:id="@+id/viewPowerGlow"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/bg_power_glow"
+                    android:alpha="0.3"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🌱"
-                                android:textSize="28sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Nảy mầm"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/black" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="R:180 G:30 B:120"
-                                android:textSize="10sp"
-                                android:textColor="@color/gray" />
-
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Phát triển lá -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardVegetative"
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="1dp"
-                        app:strokeWidth="2dp"
-                        app:strokeColor="@color/gray">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🍃"
-                                android:textSize="28sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Phát triển lá"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/black" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="R:100 G:20 B:255"
-                                android:textSize="10sp"
-                                android:textColor="@color/gray" />
-
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
-
-                <!-- Row 2: Ra hoa + Đậu quả -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- Ra hoa -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardFlowering"
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="1dp"
-                        app:strokeWidth="2dp"
-                        app:strokeColor="@color/gray">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🌸"
-                                android:textSize="28sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Ra hoa"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/black" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="R:255 G:0 B:80"
-                                android:textSize="10sp"
-                                android:textColor="@color/gray" />
-
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Đậu quả -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardFruiting"
-                        android:layout_width="0dp"
-                        android:layout_height="100dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardElevation="1dp"
-                        app:strokeWidth="2dp"
-                        app:strokeColor="@color/gray">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:gravity="center"
-                            android:padding="8dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🍅"
-                                android:textSize="28sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Đậu quả"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/black" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="R:255 G:10 B:40"
-                                android:textSize="10sp"
-                                android:textColor="@color/gray" />
-
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                </LinearLayout>
-
-                <!-- Manual mode card -->
+                <!-- Nút power -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardManual"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="10dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="1dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="@color/gray">
+                    android:id="@+id/btnPower"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="#1A2D1E"
+                    app:cardCornerRadius="26dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#2D4A31"
+                    app:strokeWidth="2dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        android:padding="12dp">
+                    <ImageView
+                        android:id="@+id/iconPower"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_power"
+                        app:tint="#4A6A4E"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✋"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="Thủ công — Tự chỉnh màu"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/black" />
-
-                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════════
+             LED PREVIEW CARD (Glassmorphic Live Preview)
+             Hiển thị màu hiện tại + mode + RGB values.
+             Background cross-fade khi thay đổi màu.
+             ══════════════════════════════════════════════ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardLedPreview"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="20dp"
+            app:cardBackgroundColor="#0F1E12"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#1E3B22"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center_vertical">
+
+                <!-- Color orb với outer glow -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/viewLedPreview"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="16dp"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="4dp"
+                    app:strokeColor="#44FFFFFF"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvCurrentMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-- Chưa có dữ liệu"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#ECEFF1"
+                        android:fontFamily="@font/montserrat_bold"/>
+
+                    <TextView
+                        android:id="@+id/tvColorHex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="R:0  G:0  B:0"
+                        android:textSize="12sp"
+                        android:textColor="#4A8C52"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:letterSpacing="0.05"/>
+
+                </LinearLayout>
+
+                <!-- Loading indicator -->
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressLed"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:visibility="gone"
+                    app:indicatorColor="#84CC16"
+                    app:trackColor="#1A2D1E"
+                    app:indicatorSize="32dp"
+                    app:trackThickness="3dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ═══ CARD MANUAL SLIDER (chỉ hiện khi chọn MANUAL) ═══ -->
+        <!-- ══════════════════════════════════════════════
+             PRESET MODES GRID (2×2 + Manual full-width)
+             Mỗi card khi được chọn sẽ:
+             1. Stroke sáng lên bằng màu tương ứng
+             2. Scale lên nhẹ (spring physics: 1.0 → 1.04)
+             3. Background toàn màn hình cross-fade sang tint màu đó
+             ══════════════════════════════════════════════ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chế độ chiếu sáng"
+            android:textSize="13sp"
+            android:textColor="#4A8C52"
+            android:fontFamily="@font/montserrat_medium"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Row 1: Nảy mầm + Phát triển lá -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <!-- ── Nảy mầm (R:180 G:30 B:120 → tím hồng) ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardGermination"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#1A0E1A"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#3D1A3D">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
+
+                    <!--
+                        Orb màu nhỏ thể hiện màu preset.
+                        Sẽ được set tint dynamically.
+                    -->
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_mode_orb_germination"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Nảy mầm"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#D4A8D4"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="R:180 G:30 B:120"
+                        android:textSize="9sp"
+                        android:textColor="#6B3E6B"
+                        android:fontFamily="@font/montserrat_medium"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Phát triển lá (R:100 G:20 B:255 → tím xanh) ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardVegetative"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#0E0E1E"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#1A1A3D">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
+
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_mode_orb_vegetative"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Phát triển lá"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#A8A8E8"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="R:100 G:20 B:255"
+                        android:textSize="9sp"
+                        android:textColor="#3D3D6B"
+                        android:fontFamily="@font/montserrat_medium"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- Row 2: Ra hoa + Đậu quả -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <!-- ── Ra hoa (R:255 G:0 B:80 → đỏ hồng) ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFlowering"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#1E0E10"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#3D1A1E">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
+
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_mode_orb_flowering"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Ra hoa"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#E8A8B0"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="R:255 G:0 B:80"
+                        android:textSize="9sp"
+                        android:textColor="#6B2D34"
+                        android:fontFamily="@font/montserrat_medium"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ── Đậu quả (R:255 G:10 B:40 → đỏ) ── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFruiting"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#1E0A0A"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#3D1010">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
+
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_mode_orb_fruiting"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Đậu quả"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="#E89090"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="R:255 G:10 B:40"
+                        android:textSize="9sp"
+                        android:textColor="#6B2020"
+                        android:fontFamily="@font/montserrat_medium"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- ── Manual Mode (full-width) ── -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardManual"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="#0F1A0E"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#1E3A1C">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_palette"
+                    android:layout_marginEnd="10dp"
+                    app:tint="#84CC16"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thủ công  —  Tự chỉnh màu"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#84CC16"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:letterSpacing="0.02"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ══════════════════════════════════════════════
+             COLOR ORBIT WHEEL (Manual Mode)
+             Custom View được vẽ bằng Canvas.
+             ColorOrbitWheelView.kt — Vẽ vòng tròn màu HSV,
+             người dùng chạm vào để chọn hue,
+             tâm vòng tròn thay đổi màu preview.
+             Kèm 3 thanh slider R/G/B phía dưới.
+             Chỉ hiện khi chọn MANUAL mode.
+             ══════════════════════════════════════════════ -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:visibility="gone"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
+            android:alpha="0"
+            android:scaleX="0.9"
+            android:scaleY="0.9"
+            app:cardBackgroundColor="#0F1A0E"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#1E3A1C"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -383,96 +497,123 @@
                     android:text="Tùy chỉnh màu sắc"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_marginBottom="16dp" />
+                    android:textColor="#C8E6C9"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:layout_marginBottom="20dp"/>
 
-                <!-- Preview màu manual -->
-                <View
+                <!--
+                    Color Orbit Wheel — Custom View
+                    Vòng tròn HSV color wheel 240dp×240dp,
+                    tâm hiện màu đã chọn,
+                    indicator chạy theo vị trí chạm.
+                -->
+                <com.example.greenhousesystem.ui.widget.ColorOrbitWheelView
+                    android:id="@+id/colorOrbitWheel"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="24dp"/>
+
+                <!-- Thanh preview màu manual (full-width capsule) -->
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/viewManualPreview"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/rounded_color_bar"
-                    android:layout_marginBottom="20dp" />
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#33FFFFFF"/>
 
-                <!-- Slider Red -->
+                <!-- ── Slider RED ── -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="14dp">
 
                     <TextView
-                        android:layout_width="32dp"
+                        android:layout_width="16dp"
                         android:layout_height="wrap_content"
                         android:text="R"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#E53935" />
+                        android:textColor="#E53935"
+                        android:fontFamily="@font/montserrat_bold"/>
 
                     <com.google.android.material.slider.Slider
                         android:id="@+id/sliderRed"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginHorizontal="10dp"
                         android:valueFrom="0"
                         android:valueTo="255"
                         android:stepSize="1"
                         app:thumbColor="#E53935"
                         app:trackColorActive="#E53935"
-                        app:trackColorInactive="#FFCDD2" />
+                        app:trackColorInactive="#3D1010"
+                        app:thumbRadius="10dp"
+                        app:trackHeight="4dp"/>
 
                     <TextView
                         android:id="@+id/tvRedValue"
                         android:layout_width="36dp"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textColor="#E53935"
-                        android:gravity="end" />
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="end"/>
 
                 </LinearLayout>
 
-                <!-- Slider Green -->
+                <!-- ── Slider GREEN ── -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="14dp">
 
                     <TextView
-                        android:layout_width="32dp"
+                        android:layout_width="16dp"
                         android:layout_height="wrap_content"
                         android:text="G"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#43A047" />
+                        android:textColor="#43A047"
+                        android:fontFamily="@font/montserrat_bold"/>
 
                     <com.google.android.material.slider.Slider
                         android:id="@+id/sliderGreen"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginHorizontal="10dp"
                         android:valueFrom="0"
                         android:valueTo="255"
                         android:stepSize="1"
                         app:thumbColor="#43A047"
                         app:trackColorActive="#43A047"
-                        app:trackColorInactive="#C8E6C9" />
+                        app:trackColorInactive="#0F2A0F"
+                        app:thumbRadius="10dp"
+                        app:trackHeight="4dp"/>
 
                     <TextView
                         android:id="@+id/tvGreenValue"
                         android:layout_width="36dp"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textColor="#43A047"
-                        android:gravity="end" />
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="end"/>
 
                 </LinearLayout>
 
-                <!-- Slider Blue -->
+                <!-- ── Slider BLUE ── -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -481,46 +622,60 @@
                     android:layout_marginBottom="20dp">
 
                     <TextView
-                        android:layout_width="32dp"
+                        android:layout_width="16dp"
                         android:layout_height="wrap_content"
                         android:text="B"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#1E88E5" />
+                        android:textColor="#1E88E5"
+                        android:fontFamily="@font/montserrat_bold"/>
 
                     <com.google.android.material.slider.Slider
                         android:id="@+id/sliderBlue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginHorizontal="10dp"
                         android:valueFrom="0"
                         android:valueTo="255"
                         android:stepSize="1"
                         app:thumbColor="#1E88E5"
                         app:trackColorActive="#1E88E5"
-                        app:trackColorInactive="#BBDEFB" />
+                        app:trackColorInactive="#0A1A2A"
+                        app:thumbRadius="10dp"
+                        app:trackHeight="4dp"/>
 
                     <TextView
                         android:id="@+id/tvBlueValue"
                         android:layout_width="36dp"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="13sp"
+                        android:textSize="12sp"
                         android:textColor="#1E88E5"
-                        android:gravity="end" />
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="end"/>
 
                 </LinearLayout>
 
-                <!-- Nút Áp dụng -->
+                <!--
+                    Nút Áp dụng — Spring scale animation khi nhấn.
+                    Màu nền phản chiếu màu đang preview.
+                    Ripple effect dạng gợn sóng.
+                -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnApplyManual"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="56dp"
                     android:text="Áp dụng màu"
                     android:textSize="15sp"
-                    app:cornerRadius="12dp"
+                    android:textColor="#0A1A0A"
+                    android:fontFamily="@font/montserrat_bold"
+                    app:backgroundTint="#84CC16"
+                    app:cornerRadius="16dp"
+                    app:rippleColor="#33000000"
                     app:icon="@drawable/ic_led"
-                    app:iconGravity="textStart" />
+                    app:iconGravity="textStart"
+                    app:iconTint="#0A1A0A"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

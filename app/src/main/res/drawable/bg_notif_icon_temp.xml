@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_notif_icon_temp.xml — Icon background đỏ cho cảnh báo nhiệt độ CRITICAL -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#3DEF5350"/>
+    <stroke android:width="1dp" android:color="#60EF5350"/>
+</shape>

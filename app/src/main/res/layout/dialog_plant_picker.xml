@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#0F1E12"> <!-- Màu nền đồng bộ với hệ thống -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPlants"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        android:nestedScrollingEnabled="false" />
+
+    <!-- Lottie Loading: Sẽ ẩn đi sau khi load xong data -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottiePickerLoading"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:lottie_rawRes="@raw/loading"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
+</LinearLayout>

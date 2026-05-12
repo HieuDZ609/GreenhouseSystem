@@ -1,40 +1,38 @@
 package com.example.greenhousesystem.ui.chart
 
 import android.graphics.Color
-import android.graphics.DashPathEffect
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.greenhousesystem.databinding.FragmentChartBinding
-import com.example.greenhousesystem.model.PlantProfile
-import com.example.greenhousesystem.model.SensorHistory
+import com.example.greenhousesystem.ui.SharedDeviceViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.ValueFormatter
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class ChartFragment : Fragment() {
 
     private var _binding: FragmentChartBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ChartViewModel by viewModels()
 
-    // Lưu timestamps để format trục X
-    private var timestamps = listOf<Long>()
+    private val chartViewModel: ChartViewModel by viewModels()
+    private val sharedViewModel: SharedDeviceViewModel by activityViewModels()
+
+    private var tempLabels  = listOf<String>()
+    private var humidLabels = listOf<String>()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,216 +40,279 @@ class ChartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupChartAppearance(binding.chartTemperature, "°C")
-        setupChartAppearance(binding.chartHumidity, "%")
+        setupCharts()
+        setupFilterStrip()
         setupSwipeRefresh()
-        observeViewModel()
+        observeViewModels()
     }
 
-    private fun setupChartAppearance(chart: LineChart, unit: String) {
-        chart.apply {
-            description.isEnabled = false
-            legend.isEnabled = false
-            setTouchEnabled(true)
-            isDragEnabled = true
-            setScaleEnabled(true)
-            setPinchZoom(true)
-            setDrawGridBackground(false)
-            setBackgroundColor(Color.WHITE)
-            extraBottomOffset = 8f
+    // ─────────────────────────────────────────────────────────────────────
+    //  SETUP CHARTS
+    // ─────────────────────────────────────────────────────────────────────
+    private fun setupCharts() {
+        listOf(binding.chartTemperature, binding.chartHumidity).forEach { chart ->
+            chart.apply {
+                setBackgroundColor(Color.TRANSPARENT)
+                description.isEnabled = false
+                legend.isEnabled      = false
+                setTouchEnabled(true)
+                isDragEnabled         = true
+                setScaleEnabled(false)
+                setPinchZoom(false)
+                setDrawGridBackground(false)
+                setNoDataText("Đang tải dữ liệu...")
+                setNoDataTextColor(Color.parseColor("#4A8C52"))
 
-            // Trục X
-            xAxis.apply {
-                position = XAxis.XAxisPosition.BOTTOM
-                setDrawGridLines(true)
-                gridColor = Color.parseColor("#F0F0F0")
-                textColor = Color.parseColor("#666666")
-                textSize = 10f
-                labelRotationAngle = -30f
-                granularity = 1f
-                // Format trục X theo HH:mm
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        val index = value.toInt()
-                        return if (index >= 0 && index < timestamps.size) {
-                            SimpleDateFormat("HH:mm", Locale.getDefault())
-                                .format(Date(timestamps[index]))
-                        } else ""
-                    }
+                xAxis.apply {
+                    position        = XAxis.XAxisPosition.BOTTOM
+                    textColor       = Color.parseColor("#4A8C52")
+                    textSize        = 9f
+                    gridColor       = Color.parseColor("#1A2D1E")
+                    gridLineWidth   = 0.5f
+                    axisLineColor   = Color.parseColor("#2D4A31")
+                    setDrawAxisLine(true)
+                    setDrawGridLines(true)
+                    granularity     = 1f
+                    labelCount      = 6
                 }
-            }
 
-            // Trục Y trái
-            axisLeft.apply {
-                setDrawGridLines(true)
-                gridColor = Color.parseColor("#F0F0F0")
-                textColor = Color.parseColor("#666666")
-                textSize = 11f
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        return "${value.toInt()}$unit"
-                    }
+                axisLeft.apply {
+                    textColor     = Color.parseColor("#4A8C52")
+                    textSize      = 9f
+                    gridColor     = Color.parseColor("#1A2D1E")
+                    gridLineWidth = 0.5f
+                    axisLineColor = Color.parseColor("#2D4A31")
                 }
+
+                axisRight.isEnabled = false
+                setExtraOffsets(8f, 16f, 8f, 8f)
+                animateX(1200)
             }
+        }
+    }
 
-            // Tắt trục Y phải
-            axisRight.isEnabled = false
+    // ─────────────────────────────────────────────────────────────────────
+    //  FILTER STRIP
+    // ─────────────────────────────────────────────────────────────────────
+    private fun setupFilterStrip() {
+        mapOf(
+            binding.btnFilterToday to ChartFilter.TODAY,
+            binding.btnFilterWeek  to ChartFilter.WEEK,
+            binding.btnFilterMonth to ChartFilter.MONTH
+        ).forEach { (btn, filter) ->
+            btn.setOnClickListener { chartViewModel.setFilter(filter) }
+        }
+    }
 
-            // Animation
-            animateX(800)
+    private fun updateFilterUi(activeFilter: ChartFilter) {
+        val limeText = Color.parseColor("#84CC16")
+        val dimText  = Color.parseColor("#4A6A4E")
+
+        mapOf(
+            binding.btnFilterToday to ChartFilter.TODAY,
+            binding.btnFilterWeek  to ChartFilter.WEEK,
+            binding.btnFilterMonth to ChartFilter.MONTH
+        ).forEach { (btn, filter) ->
+            val isActive = filter == activeFilter
+            btn.apply {
+                setBackgroundColor(
+                    if (isActive) Color.parseColor("#1584CC16") else Color.TRANSPARENT
+                )
+                setTextColor(if (isActive) limeText else dimText)
+                animate()
+                    .scaleX(if (isActive) 1.05f else 1f)
+                    .scaleY(if (isActive) 1.05f else 1f)
+                    .setDuration(200L)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
+            }
         }
     }
 
     private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setColorSchemeResources(
-            android.R.color.holo_green_dark
-        )
-        binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadHistory()
+        binding.swipeRefresh.apply {
+            setColorSchemeColors(Color.parseColor("#84CC16"))
+            setProgressBackgroundColorSchemeColor(Color.parseColor("#0F1E12"))
+            setOnRefreshListener { chartViewModel.refresh() }
         }
     }
 
-    private fun observeViewModel() {
-        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
-            if (!loading) binding.swipeRefresh.isRefreshing = false
-        }
+    // ─────────────────────────────────────────────────────────────────────
+    //  OBSERVE
+    // ─────────────────────────────────────────────────────────────────────
+    private fun observeViewModels() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        viewModel.isEmpty.observe(viewLifecycleOwner) { isEmpty ->
-            binding.tvMockBadge.visibility = if (isEmpty) View.VISIBLE else View.GONE
-        }
+                // Loading → Shimmer
+                launch {
+                    chartViewModel.isLoading.collectLatest { loading ->
+                        binding.swipeRefresh.isRefreshing = loading
+                        binding.shimmerTemp.apply {
+                            if (loading) { visibility = View.VISIBLE; startShimmer() }
+                            else { stopShimmer(); visibility = View.GONE }
+                        }
+                        binding.shimmerHumid.apply {
+                            if (loading) { visibility = View.VISIBLE; startShimmer() }
+                            else { stopShimmer(); visibility = View.GONE }
+                        }
+                        binding.chartTemperature.visibility =
+                            if (loading) View.INVISIBLE else View.VISIBLE
+                        binding.chartHumidity.visibility =
+                            if (loading) View.INVISIBLE else View.VISIBLE
+                    }
+                }
 
-        viewModel.historyData.observe(viewLifecycleOwner) { data ->
-            if (data.isNotEmpty()) {
-                timestamps = data.map { it.timestamp ?: 0L }
-                updateTemperatureChart(data)
-                updateHumidityChart(data)
-                updateStats(data)
-            }
-        }
+                // Filter tab
+                launch {
+                    chartViewModel.currentFilter.collectLatest { updateFilterUi(it) }
+                }
 
-        viewModel.selectedPlant.observe(viewLifecycleOwner) { plant ->
-            binding.tvTempThreshold.text =
-                "Ngưỡng: ${plant.tempMin}°C ~ ${plant.tempMax}°C"
-            binding.tvHumidThreshold.text =
-                "Ngưỡng: ${plant.humidityMin}% ~ ${plant.humidityMax}%"
+                // Mock badge
+                launch {
+                    chartViewModel.isMockData.collectLatest { isMock ->
+                        binding.tvMockBadge.visibility =
+                            if (isMock) View.VISIBLE else View.GONE
+                    }
+                }
 
-            // Cập nhật đường ngưỡng trên chart nếu đã có data
-            viewModel.historyData.value?.let {
-                if (it.isNotEmpty()) {
-                    addLimitLines(binding.chartTemperature, plant.tempMin, plant.tempMax, "°C")
-                    addLimitLines(binding.chartHumidity, plant.humidityMin, plant.humidityMax, "%")
+                // Temperature chart
+                launch {
+                    chartViewModel.chartDataTemp.collectLatest { entries ->
+                        if (entries.isNotEmpty()) {
+                            renderChart(
+                                chart      = binding.chartTemperature,
+                                entries    = entries,
+                                // ✅ FIX: đổi tên param thành chartLineColor / chartFillColor
+                                // tránh bị Kotlin hiểu nhầm là property của LineDataSet
+                                // khi gọi trong scope apply{} bên trong renderChart.
+                                chartLineColor = Color.parseColor("#EF5350"),
+                                chartFillColor = Color.parseColor("#1AEF5350"),
+                                thresholds     = chartViewModel.tempThreshold.value
+                            )
+                        }
+                        tempLabels = entries.map { it.label }
+                    }
+                }
+
+                // Humidity chart
+                launch {
+                    chartViewModel.chartDataHumid.collectLatest { entries ->
+                        if (entries.isNotEmpty()) {
+                            renderChart(
+                                chart          = binding.chartHumidity,
+                                entries        = entries,
+                                chartLineColor = Color.parseColor("#42A5F5"),
+                                chartFillColor = Color.parseColor("#1A42A5F5"),
+                                thresholds     = chartViewModel.humidThreshold.value
+                            )
+                        }
+                        humidLabels = entries.map { it.label }
+                    }
+                }
+
+                // Stats nhiệt độ
+                launch {
+                    chartViewModel.tempStats.collectLatest { stats ->
+                        binding.tvTempMin.text = String.format("%.1f°C", stats.min)
+                        binding.tvTempAvg.text = String.format("%.1f°C", stats.avg)
+                        binding.tvTempMax.text = String.format("%.1f°C", stats.max)
+                    }
+                }
+
+                // Stats độ ẩm
+                launch {
+                    chartViewModel.humidStats.collectLatest { stats ->
+                        binding.tvHumidMin.text = String.format("%.1f%%", stats.min)
+                        binding.tvHumidAvg.text = String.format("%.1f%%", stats.avg)
+                        binding.tvHumidMax.text = String.format("%.1f%%", stats.max)
+                    }
+                }
+
+                // Threshold từ SharedDeviceViewModel → limit lines
+                launch {
+                    sharedViewModel.thresholds.collectLatest { t ->
+                        chartViewModel.setThresholds(
+                            t.tempMin, t.tempMax, t.humidMin, t.humidMax
+                        )
+                        binding.tvTempThreshold.text =
+                            "Ngưỡng: ${t.tempMin.toInt()}°C ~ ${t.tempMax.toInt()}°C"
+                        binding.tvHumidThreshold.text =
+                            "Ngưỡng: ${t.humidMin.toInt()}% ~ ${t.humidMax.toInt()}%"
+                    }
                 }
             }
         }
     }
 
-    private fun updateTemperatureChart(data: List<SensorHistory>) {
-        val entries = data.mapIndexed { index, sensor ->
-            Entry(index.toFloat(), sensor.temperature?.toFloat() ?: 0f)
-        }
+    // ─────────────────────────────────────────────────────────────────────
+    //  RENDER CHART
+    //
+    //  ✅ FIX (line 305, 320, 331): Đổi tên tham số từ lineColor/fillColor
+    //  thành chartLineColor/chartFillColor.
+    //
+    //  Nguyên nhân lỗi "val cannot be reassigned":
+    //  Bên trong LineDataSet.apply{ fillColor = fillColor } — Kotlin hiểu
+    //  vế phải "fillColor" là property của LineDataSet (Int), không phải
+    //  tham số hàm (Int) → gán Int cho Int nhưng báo "val cannot be reassigned"
+    //  vì fillColor của LineDataSet là val trong một số version MPAndroidChart.
+    //
+    //  Tương tự với lineColor trong LimitLine.apply{ lineColor = lineColor }.
+    //
+    //  Giải pháp: đổi tên param hàm để không shadow property của DataSet.
+    // ─────────────────────────────────────────────────────────────────────
+    private fun renderChart(
+        chart          : LineChart,
+        entries        : List<ChartEntry>,
+        chartLineColor : Int,          // ✅ tên mới, không conflict với LineDataSet.color
+        chartFillColor : Int,          // ✅ tên mới, không conflict với LineDataSet.fillColor
+        thresholds     : Pair<Double, Double>
+    ) {
+        val mpEntries = entries.mapIndexed { i, e -> Entry(i.toFloat(), e.value) }
 
-        val dataSet = LineDataSet(entries, "Nhiệt độ").apply {
-            color = Color.parseColor("#E53935")       // đỏ
-            valueTextColor = Color.parseColor("#E53935")
-            lineWidth = 2f
-            circleRadius = 3f
-            setCircleColor(Color.parseColor("#E53935"))
-            setDrawCircleHole(false)
-            setDrawValues(false)                       // ẩn value trên điểm
-            mode = LineDataSet.Mode.CUBIC_BEZIER      // đường cong mượt
-            setDrawFilled(true)
-            fillColor = Color.parseColor("#E53935")
-            fillAlpha = 30                             // fill nhạt phía dưới
-        }
-
-        binding.chartTemperature.data = LineData(dataSet)
-
-        // Thêm đường ngưỡng nếu đã có plant
-        viewModel.selectedPlant.value?.let { plant ->
-            addLimitLines(binding.chartTemperature, plant.tempMin, plant.tempMax, "°C")
-        }
-
-        binding.chartTemperature.invalidate()
-    }
-
-    private fun updateHumidityChart(data: List<SensorHistory>) {
-        val entries = data.mapIndexed { index, sensor ->
-            Entry(index.toFloat(), sensor.humidity?.toFloat() ?: 0f)
-        }
-
-        val dataSet = LineDataSet(entries, "Độ ẩm").apply {
-            color = Color.parseColor("#1E88E5")        // xanh dương
-            valueTextColor = Color.parseColor("#1E88E5")
-            lineWidth = 2f
-            circleRadius = 3f
-            setCircleColor(Color.parseColor("#1E88E5"))
-            setDrawCircleHole(false)
+        val dataSet = LineDataSet(mpEntries, "").apply {
+            // ✅ Dùng chartLineColor (tham số hàm), không phải property của LineDataSet
+            color              = chartLineColor
+            lineWidth          = 2.5f
+            setDrawCircles(false)
             setDrawValues(false)
-            mode = LineDataSet.Mode.CUBIC_BEZIER
+            mode               = LineDataSet.Mode.CUBIC_BEZIER
+            cubicIntensity     = 0.2f
             setDrawFilled(true)
-            fillColor = Color.parseColor("#1E88E5")
-            fillAlpha = 30
+            // ✅ Gán trực tiếp bằng setter để rõ ràng
+            setFillColor(chartFillColor)
+            fillAlpha          = 180
+            highLightColor     = Color.parseColor("#84CC16")
         }
 
-        binding.chartHumidity.data = LineData(dataSet)
-
-        viewModel.selectedPlant.value?.let { plant ->
-            addLimitLines(binding.chartHumidity, plant.humidityMin, plant.humidityMax, "%")
-        }
-
-        binding.chartHumidity.invalidate()
-    }
-
-    private fun addLimitLines(chart: LineChart, min: Double, max: Double, unit: String) {
-        // Xóa limit lines cũ
+        chart.data = LineData(dataSet)
+        chart.xAxis.valueFormatter = IndexAxisValueFormatter(entries.map { it.label })
         chart.axisLeft.removeAllLimitLines()
 
-        // Đường ngưỡng MIN — xanh dương đứt
-        val minLine = LimitLine(min.toFloat(), "Min ${min.toInt()}$unit").apply {
-            lineWidth = 1.5f
-            lineColor = Color.parseColor("#1565C0")
-            enableDashedLine(10f, 8f, 0f)
-            textColor = Color.parseColor("#1565C0")
-            textSize = 10f
-            labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
-        }
-
-        // Đường ngưỡng MAX — đỏ đứt
-        val maxLine = LimitLine(max.toFloat(), "Max ${max.toInt()}$unit").apply {
-            lineWidth = 1.5f
-            lineColor = Color.parseColor("#D32F2F")
-            enableDashedLine(10f, 8f, 0f)
-            textColor = Color.parseColor("#D32F2F")
-            textSize = 10f
-            labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
-        }
-
+        // ── LimitLine ngưỡng MIN ──────────────────────────────────────
+        // ✅ FIX: Dùng biến local minLimitLine thay vì apply{} để tránh
+        // shadow property lineColor của LimitLine.
+        val minLine = LimitLine(thresholds.first.toFloat(), "Min")
+        minLine.lineColor    = Color.parseColor("#1565C0")  // ✅ rõ ràng, không ambiguous
+        minLine.lineWidth    = 1f
+        minLine.enableDashedLine(10f, 5f, 0f)
+        minLine.textColor    = Color.parseColor("#64B5F6")
+        minLine.textSize     = 9f
+        minLine.labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
         chart.axisLeft.addLimitLine(minLine)
+
+        // ── LimitLine ngưỡng MAX ──────────────────────────────────────
+        val maxLine = LimitLine(thresholds.second.toFloat(), "Max")
+        maxLine.lineColor    = Color.parseColor("#C62828")  // ✅ rõ ràng
+        maxLine.lineWidth    = 1f
+        maxLine.enableDashedLine(10f, 5f, 0f)
+        maxLine.textColor    = Color.parseColor("#EF9A9A")
+        maxLine.textSize     = 9f
+        maxLine.labelPosition = LimitLine.LimitLabelPosition.LEFT_BOTTOM
         chart.axisLeft.addLimitLine(maxLine)
+
+        chart.animateX(1200)
         chart.invalidate()
-    }
-
-    private fun updateStats(data: List<SensorHistory>) {
-        // Nhiệt độ
-        val temps = data.mapNotNull { it.temperature }
-        val minTemp = temps.minOrNull() ?: 0.0
-        val maxTemp = temps.maxOrNull() ?: 0.0
-        val avgTemp = if (temps.isNotEmpty()) temps.average() else 0.0
-
-        binding.tvTempMin.text = String.format(Locale.getDefault(), "%.1f°C", minTemp)
-        binding.tvTempMax.text = String.format(Locale.getDefault(), "%.1f°C", maxTemp)
-        binding.tvTempAvg.text = String.format(Locale.getDefault(), "%.1f°C", avgTemp)
-
-        // Độ ẩm
-        val humids = data.mapNotNull { it.humidity }
-        val minHumid = humids.minOrNull() ?: 0.0
-        val maxHumid = humids.maxOrNull() ?: 0.0
-        val avgHumid = if (humids.isNotEmpty()) humids.average() else 0.0
-
-        binding.tvHumidMin.text = String.format(Locale.getDefault(), "%.1f%%", minHumid)
-        binding.tvHumidMax.text = String.format(Locale.getDefault(), "%.1f%%", maxHumid)
-        binding.tvHumidAvg.text = String.format(Locale.getDefault(), "%.1f%%", avgHumid)
     }
 
     override fun onDestroyView() {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bottom_nav_color_dark.xml — Color State List cho BottomNavigationView icon + text
+    Đặt trong: res/color/bottom_nav_color_dark.xml
+
+    Tab được chọn: lime #CCFF00
+    Tab bình thường: xanh nhạt mờ #3A6A3E
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#CCFF00"
+        android:state_checked="true"/>
+    <item android:color="#3A6A3E"/>
+</selector>

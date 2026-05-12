@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LiquidGaugeView">
+        <attr name="gaugeColor" format="color"/>
+        <attr name="gaugeWaveColor" format="color"/>
+        <attr name="gaugeMin" format="float"/>
+        <attr name="gaugeMax" format="float"/>
+    </declare-styleable>
+</resources>

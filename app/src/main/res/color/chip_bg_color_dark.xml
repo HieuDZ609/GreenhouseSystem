@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Chip đang được chọn (active filter) -->
+    <item android:color="#33CCFF00" android:state_checked="true"/>
+    <!-- Chip bình thường -->
+    <item android:color="#1AFFFFFF"/>
+</selector>

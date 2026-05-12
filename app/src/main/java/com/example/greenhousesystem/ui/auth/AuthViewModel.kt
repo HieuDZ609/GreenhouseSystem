@@ -1,10 +1,13 @@
 package com.example.greenhousesystem.ui.auth
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenhousesystem.model.User
+import com.example.greenhousesystem.service.AlertScheduler
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -13,7 +16,8 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
+
 
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().reference
@@ -28,7 +32,6 @@ class AuthViewModel : ViewModel() {
 
     fun register(displayName: String, email: String, phone: String, password: String) {
         _registerState.value = AuthState.Loading
-
         viewModelScope.launch {
             try {
                 // 1. Tạo tài khoản Firebase Auth
@@ -88,6 +91,8 @@ class AuthViewModel : ViewModel() {
                 database.child("GreenHouseSystem")
                     .child("users").child(uid)
                     .child("loginFailCount").setValue(0).await()
+
+                AlertScheduler.start(getApplication())
 
                 _loginState.value = AuthState.Success("Đăng nhập thành công!")
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    chip_text_color_dark.xml — Color State List cho Chip text color
+    Đặt trong: res/color/chip_text_color_dark.xml
+
+    Trạng thái checked: lime sáng #CCFF00 (dễ đọc trên nền tối)
+    Trạng thái mặc định: xanh nhạt mờ #A0B8A8 (không nổi bật)
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#CCFF00" android:state_checked="true"/>
+    <item android:color="#A0B8A8"/>
+</selector>

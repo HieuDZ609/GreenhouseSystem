@@ -3,22 +3,18 @@ package com.example.greenhousesystem.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.greenhousesystem.model.DeviceStatus
-import com.example.greenhousesystem.model.LedStatus
-import com.example.greenhousesystem.model.PlantProfile
-import com.example.greenhousesystem.model.SensorData
+import com.example.greenhousesystem.model.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class HomeViewModel : ViewModel() {
 
-    private val db = FirebaseDatabase.getInstance().reference
+    private val databaseUrl = "https://greenhousesystem-97224-default-rtdb.asia-southeast1.firebasedatabase.app"
+    private val db = FirebaseDatabase.getInstance(databaseUrl).reference
         .child("GreenHouseSystem")
     private val auth = FirebaseAuth.getInstance()
 
+    // --- LiveData quan sát bởi HomeFragment ---
     private val _sensorData = MutableLiveData<SensorData>()
     val sensorData: LiveData<SensorData> = _sensorData
 
@@ -34,90 +30,89 @@ class HomeViewModel : ViewModel() {
     private val _alertMessage = MutableLiveData<String?>()
     val alertMessage: LiveData<String?> = _alertMessage
 
-    // Listeners để remove khi ViewModel bị destroy
-    private var sensorListener: ValueEventListener? = null
-    private var deviceListener: ValueEventListener? = null
-    private var ledListener: ValueEventListener? = null
-    private var plantListener: ValueEventListener? = null
+    // Quản lý Listener để tránh leak bộ nhớ
+    private var telemetryListener: ValueEventListener? = null
+    private var configListener: ValueEventListener? = null
+    private var plantSelectionListener: ValueEventListener? = null
+    private var currentDeviceId: String? = null
 
     init {
-        listenSensor()
-        listenDeviceStatus()
-        listenLedStatus()
-        listenSelectedPlant()
+        listenSelectedPlant() // Luôn lắng nghe loại cây người dùng đang chọn
     }
 
-    private fun listenSensor() {
-        sensorListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val data = SensorData(
-                    temperature = snapshot.child("temperature")
-                        .getValue(Double::class.java) ?: 0.0,
-                    humidity = snapshot.child("humidity")
-                        .getValue(Double::class.java) ?: 0.0,
-                    timestamp = snapshot.child("timestamp")
-                        .getValue(Long::class.java) ?: 0L
-                )
-                _sensorData.value = data
-                checkAlert(data)
-            }
-            override fun onCancelled(error: DatabaseError) {}
-        }
-        db.child("sensors").addValueEventListener(sensorListener!!)
+    /**
+     * Được gọi khi SharedDeviceViewModel báo có thiết bị mới được chọn
+     */
+    fun loadDeviceData(deviceId: String) {
+        if (currentDeviceId == deviceId) return
+
+        // Gỡ bỏ listener cũ nếu đang đổi thiết bị
+        removeOldListeners()
+
+        currentDeviceId = deviceId
+        observeTelemetry(deviceId)
+        observeLedConfig(deviceId)
     }
 
-    private fun listenDeviceStatus() {
-        deviceListener = object : ValueEventListener {
+    private fun observeTelemetry(deviceId: String) {
+        telemetryListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                // Đọc dữ liệu cảm biến [cite: 16, 41, 99]
+                val temp = snapshot.child("temperature").getValue(Double::class.java) ?: 0.0
+                val humid = snapshot.child("humidity").getValue(Double::class.java) ?: 0.0
+                val ts = snapshot.child("timestamp").getValue(Long::class.java) ?: 0L
+
+                _sensorData.value = SensorData(temp, humid, ts)
+
+                // Đọc trạng thái Online/Offline
+                val isOnline = snapshot.child("is_online").getValue(Boolean::class.java) ?: false
                 _deviceStatus.value = DeviceStatus(
-                    status = snapshot.child("status")
-                        .getValue(String::class.java) ?: "offline",
-                    lastSeen = snapshot.child("lastSeen")
-                        .getValue(Long::class.java) ?: 0L
+                    status = if (isOnline) "online" else "offline",
+                    lastSeen = ts
                 )
+
+                // Kiểm tra cảnh báo dựa trên ngưỡng của loại cây đang chọn [cite: 12, 38, 151]
+                checkThresholds(temp, humid)
             }
             override fun onCancelled(error: DatabaseError) {}
         }
-        db.child("devices").addValueEventListener(deviceListener!!)
+        db.child("Telemetry").child(deviceId).addValueEventListener(telemetryListener!!)
     }
 
-    private fun listenLedStatus() {
-        ledListener = object : ValueEventListener {
+    private fun observeLedConfig(deviceId: String) {
+        configListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                _ledStatus.value = LedStatus(
-                    isOn = snapshot.child("isOn")
-                        .getValue(Boolean::class.java) ?: false,
-                    red = snapshot.child("red")
-                        .getValue(Int::class.java) ?: 0,
-                    green = snapshot.child("green")
-                        .getValue(Int::class.java) ?: 0,
-                    blue = snapshot.child("blue")
-                        .getValue(Int::class.java) ?: 0,
-                    mode = snapshot.child("mode")
-                        .getValue(String::class.java) ?: "MANUAL"
-                )
+                val isOn = snapshot.child("led_status").getValue(Boolean::class.java) ?: false
+                val mode = snapshot.child("led_mode").getValue(String::class.java) ?: "MANUAL"
+
+                // Lấy màu từ node led_color {r, g, b}
+                val r = snapshot.child("led_color").child("r").getValue(Int::class.java) ?: 0
+                val g = snapshot.child("led_color").child("g").getValue(Int::class.java) ?: 0
+                val b = snapshot.child("led_color").child("b").getValue(Int::class.java) ?: 0
+
+                _ledStatus.value = LedStatus(isOn, r, g, b, mode)
             }
             override fun onCancelled(error: DatabaseError) {}
         }
-        db.child("devices").child("led").addValueEventListener(ledListener!!)
+        db.child("Configs").child(deviceId).addValueEventListener(configListener!!)
     }
 
     private fun listenSelectedPlant() {
         val uid = auth.currentUser?.uid ?: return
-        plantListener = object : ValueEventListener {
+        plantSelectionListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val plantId = snapshot.getValue(String::class.java) ?: "TOMATO"
-                loadPlantProfile(plantId)
+                fetchPlantProfile(plantId)
             }
             override fun onCancelled(error: DatabaseError) {}
         }
         db.child("users").child(uid).child("selectedPlant")
-            .addValueEventListener(plantListener!!)
+            .addValueEventListener(plantSelectionListener!!)
     }
 
-    private fun loadPlantProfile(plantId: String) {
-        db.child("plantProfiles").child(plantId)
-            .get().addOnSuccessListener { snapshot ->
+    private fun fetchPlantProfile(plantId: String) {
+        db.child("PlantProfiles").child(plantId).get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
                 _selectedPlant.value = PlantProfile(
                     id = plantId,
                     name = snapshot.child("name").getValue(String::class.java) ?: "",
@@ -126,44 +121,41 @@ class HomeViewModel : ViewModel() {
                     tempMax = snapshot.child("tempMax").getValue(Double::class.java) ?: 0.0,
                     humidityMin = snapshot.child("humidityMin").getValue(Double::class.java) ?: 0.0,
                     humidityMax = snapshot.child("humidityMax").getValue(Double::class.java) ?: 0.0,
-                    recommendedLedMode = snapshot.child("recommendedLedMode")
-                        .getValue(String::class.java) ?: "VEGETATIVE"
+                    recommendedLedMode = snapshot.child("recommendedLedMode").getValue(String::class.java) ?: "VEGETATIVE"
                 )
             }
+        }
     }
 
-    private fun checkAlert(data: SensorData) {
+    // Gửi lệnh bật/tắt đèn lên Firebase [cite: 34, 126]
+    fun toggleLed(deviceId: String, newState: Boolean) {
+        db.child("Configs").child(deviceId).child("led_status").setValue(newState)
+    }
+
+    private fun checkThresholds(temp: Double, humid: Double) {
         val plant = _selectedPlant.value ?: return
-        val alerts = mutableListOf<String>()
-
-        when {
-            data.temperature > plant.tempMax ->
-                alerts.add("🌡️ Nhiệt độ ${data.temperature}°C vượt ngưỡng (>${plant.tempMax}°C)")
-            data.temperature < plant.tempMin ->
-                alerts.add("🌡️ Nhiệt độ ${data.temperature}°C thấp hơn ngưỡng (<${plant.tempMin}°C)")
+        val message = when {
+            temp > plant.tempMax -> "🌡️ Nhiệt độ quá cao (${temp}°C)! Ngưỡng tối đa: ${plant.tempMax}°C"
+            temp < plant.tempMin -> "🌡️ Nhiệt độ quá thấp (${temp}°C)! Ngưỡng tối thiểu: ${plant.tempMin}°C"
+            humid > plant.humidityMax -> "💧 Độ ẩm quá cao (${humid}%)!"
+            humid < plant.humidityMin -> "💧 Độ ẩm quá thấp (${humid}%)!"
+            else -> null
         }
-        when {
-            data.humidity > plant.humidityMax ->
-                alerts.add("💧 Độ ẩm ${data.humidity}% vượt ngưỡng (>${plant.humidityMax}%)")
-            data.humidity < plant.humidityMin ->
-                alerts.add("💧 Độ ẩm ${data.humidity}% thấp hơn ngưỡng (<${plant.humidityMin}%)")
-        }
-
-        _alertMessage.value = if (alerts.isEmpty()) null else alerts.joinToString("\n")
+        _alertMessage.value = message
     }
 
-    fun toggleLed(currentState: Boolean) {
-        db.child("devices").child("led").child("isOn").setValue(!currentState)
+    private fun removeOldListeners() {
+        currentDeviceId?.let { id ->
+            telemetryListener?.let { db.child("Telemetry").child(id).removeEventListener(it) }
+            configListener?.let { db.child("Configs").child(id).removeEventListener(it) }
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        sensorListener?.let { db.child("sensors").removeEventListener(it) }
-        deviceListener?.let { db.child("devices").removeEventListener(it) }
-        ledListener?.let { db.child("devices").child("led").removeEventListener(it) }
-        val uid = auth.currentUser?.uid ?: return
-        plantListener?.let {
-            db.child("users").child(uid).child("selectedPlant").removeEventListener(it)
+        removeOldListeners()
+        auth.currentUser?.uid?.let { uid ->
+            plantSelectionListener?.let { db.child("users").child(uid).child("selectedPlant").removeEventListener(it) }
         }
     }
 }
