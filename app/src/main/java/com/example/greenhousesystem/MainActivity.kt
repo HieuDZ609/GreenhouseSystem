@@ -3,8 +3,10 @@ package com.example.greenhousesystem
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -83,7 +85,22 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavStyle()
         observeAuthState()
         observeSharedViewModel()
-        handleInitialDestination()
+//        handleInitialDestination()
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Ưu tiên đóng Drawer nếu nó đang mở
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    // Nếu Drawer đã đóng, dùng bộ điều hành hệ thống để quay lại hoặc thoát
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        }
+        // QUAN TRỌNG: Phải có dòng này thì callback mới chạy
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -230,6 +247,7 @@ class MainActivity : AppCompatActivity() {
                             // Nếu user bị null (đăng xuất / session hết hạn)
                             if (currentUser == null) {
                                 // Kiểm tra xem có đang ở màn hình Auth chưa
+                                sharedViewModel.stopListening()
                                 val currentDest = navController.currentDestination?.id
                                 val isAtAuthScreen = currentDest in setOf(
                                     R.id.loginFragment, R.id.registerFragment
@@ -244,6 +262,7 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 // User mới đăng nhập → refresh header info
                                 loadNavHeaderInfo()
+                                sharedViewModel.startListening()
                             }
                         }
                         auth.addAuthStateListener(authListener!!)
@@ -318,24 +337,25 @@ class MainActivity : AppCompatActivity() {
      * Nếu intent cho biết chưa đăng nhập → navigate đến Login.
      * (Intent được set bởi SplashActivity dựa trên auth.currentUser)
      */
-    private fun handleInitialDestination() {
-        val isLoggedIn = intent.getBooleanExtra(EXTRA_IS_LOGGED_IN, false)
-        if (!isLoggedIn) {
-            // Post delay để NavController khởi tạo xong
-            binding.root.post {
-                navController.navigate(R.id.action_home_to_login)
-            }
-        }
-    }
+//    private fun handleInitialDestination() {
+//        val isLoggedIn = intent.getBooleanExtra(EXTRA_IS_LOGGED_IN, false)
+//        if (!isLoggedIn) {
+//            // Post delay để NavController khởi tạo xong
+//            binding.root.post {
+//                navController.navigate(R.id.action_home_to_login)
+//            }
+//        }
+//    }
 
     /** Hardware back button: đóng drawer trước nếu đang mở. */
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(binding.navigationView)) {
-            binding.drawerLayout.closeDrawers()
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
-        }
-    }
+//    @Deprecated("Deprecated in Java")
+//    override fun onBackPressed() {
+//        if (binding.drawerLayout.isDrawerOpen(binding.navigationView)) {
+//            binding.drawerLayout.closeDrawers()
+//        } else {
+//            @Suppress("DEPRECATION")
+//            super.onBackPressed()
+//        }
+//    }
+
 }

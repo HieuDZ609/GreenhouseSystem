@@ -28,6 +28,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         checkAlreadyLoggedIn()
         observeViewModel()
+        setupEntrance()
         setupClickListeners()
     }
 
@@ -92,7 +93,19 @@ class LoginFragment : Fragment() {
             }
         }
     }
+    private fun setupEntrance() {
 
+        forceShowAllViews(binding.root)
+    }
+    private fun forceShowAllViews(view: android.view.View) {
+        view.alpha = 1f
+        view.translationY = 0f
+        if (view is android.view.ViewGroup) {
+            for (i in 0 until view.childCount) {
+                forceShowAllViews(view.getChildAt(i))
+            }
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
