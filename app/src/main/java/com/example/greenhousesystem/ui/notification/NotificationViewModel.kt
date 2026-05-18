@@ -110,8 +110,15 @@ class NotificationViewModel : ViewModel() {
         currentFilter = filter
         val filtered = when (filter) {
             NotifFilter.UNREAD -> allNotificationsCache.filter { !it.isRead }
-            NotifFilter.TEMPERATURE -> allNotificationsCache.filter { it.type == "TEMPERATURE" }
-            NotifFilter.HUMIDITY -> allNotificationsCache.filter { it.type == "HUMIDITY" }
+
+            // Sửa ở đây: Lấy cả thông báo rêng lẻ và thông báo "Cả hai" (BOTH)
+            NotifFilter.TEMPERATURE -> allNotificationsCache.filter {
+                it.type == "TEMP" || it.type == "BOTH"
+            }
+            NotifFilter.HUMIDITY -> allNotificationsCache.filter {
+                it.type == "HUMID" || it.type == "BOTH"
+            }
+
             NotifFilter.ALL -> allNotificationsCache
         }
 

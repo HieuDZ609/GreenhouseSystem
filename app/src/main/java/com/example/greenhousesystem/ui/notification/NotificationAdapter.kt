@@ -24,36 +24,44 @@ class NotificationAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(notification: Notification) {
-            // Icon + màu nền biểu tượng theo loại cảnh báo (Eco-Digital Theme)
-            val (iconTxt, bgColor) = when (notification.type) {
-                "TEMPERATURE" -> "🌡️" to "#33FF4B4B" // Red Tint
-                "HUMIDITY"    -> "💧" to "#330D47A1" // Blue Tint
-                "DEVICE"      -> "📡" to "#33CCFF00" // Lime Tint
-                else          -> "🔔" to "#33A0B8A8" // Gray Tint
+            // 1. Xác định Level Icon và Màu sắc (Color Coding) dựa trên type
+            val (iconLevel, tintColor) = when (notification.type) {
+                "TEMP"  -> Pair(1, Color.parseColor("#FF7675")) // Soft Rose (Nhiệt độ)
+                "HUMID" -> Pair(2, Color.parseColor("#74B9FF")) // Soft Blue (Độ ẩm)
+                "BOTH"  -> Pair(3, Color.parseColor("#FAB1A0")) // Soft Pink (Cả hai - Nguy hiểm)
+                else    -> Pair(0, Color.parseColor("#B2BEC3")) // Gray (Mặc định)
             }
 
-            binding.tvTypeIcon.text = iconTxt
-            // Giả sử tvTypeIcon của bạn là một ShapeableImageView hoặc View có nền bo tròn
-            // Hãy dùng GradientDrawable nếu cần tạo hình tròn, ở đây dùng parseColor trực tiếp
-            binding.tvTypeIcon.setBackgroundColor(Color.parseColor(bgColor))
+            // 2. Kích hoạt SVG thay đổi hình dáng tự động qua level-list
+            binding.ivTypeIcon.setImageLevel(iconLevel)
 
+            // 3. Tint màu đồng bộ cho Icon và Dải viền bên trái
+            binding.ivTypeIcon.setColorFilter(tintColor)
+
+            // 4. Đổ dữ liệu Text
             binding.tvTitle.text = notification.title
             binding.tvMessage.text = notification.message
-            binding.tvTimestamp.text = formatTime(notification.timestamp)
+            binding.tvTime.text = formatTime(notification.timestamp)
 
-            // Kiểm tra trạng thái đã đọc để thay đổi font chữ và điểm màu (Indicator)
+            // 5. Xử lý trạng thái Đọc / Chưa đọc (Bảo toàn Glassmorphism)
             if (notification.isRead) {
-                binding.tvReadStatus.text = "✓ Đã đọc"
-                binding.tvReadStatus.setTextColor(Color.parseColor("#A0B8A8")) // Xám nhạt
+                // ĐÃ ĐỌC: Làm chìm thẻ kính xuống
                 binding.tvTitle.setTypeface(null, Typeface.NORMAL)
-                binding.viewTypeIndicator.visibility = View.INVISIBLE
-                binding.root.setCardBackgroundColor(Color.parseColor("#1AFFFFFF")) // Glass effect default
+                binding.tvTitle.setTextColor(Color.parseColor("#636E72")) // Chữ mờ đi
+                binding.viewUnreadDot.visibility = View.GONE // Ẩn chấm đỏ
+
+                // Giảm hiệu ứng bóng đổ và viền để thẻ "chìm" vào nền
+                binding.root.cardElevation = 2f
+                binding.root.strokeColor = Color.parseColor("#4DFFFFFF") // Viền trắng 30%
             } else {
-                binding.tvReadStatus.text = "● Chưa đọc"
-                binding.tvReadStatus.setTextColor(Color.parseColor("#CCFF00")) // Lime green
+                // CHƯA ĐỌC: Làm thẻ kính nổi bật lên
                 binding.tvTitle.setTypeface(null, Typeface.BOLD)
-                binding.viewTypeIndicator.visibility = View.VISIBLE
-                binding.root.setCardBackgroundColor(Color.parseColor("#26CCFF00")) // Hơi sáng lên
+                binding.tvTitle.setTextColor(Color.parseColor("#2D3436")) // Chữ Charcoal đậm
+                binding.viewUnreadDot.visibility = View.VISIBLE // Hiện chấm Lavender
+
+                // Tăng bóng đổ và viền sáng để thẻ "nổi" lên
+                binding.root.cardElevation = 6f
+                binding.root.strokeColor = Color.parseColor("#CCFFFFFF") // Viền trắng 80% bắt sáng
             }
 
             // Bắt sự kiện click vào Card

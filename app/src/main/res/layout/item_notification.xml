@@ -1,176 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    item_notification.xml — Card thông báo cảnh báo
-    ─────────────────────────────────────────────────
-    Color coding:
-      🔴 EF5350  = Nhiệt độ CRITICAL (vượt ngưỡng cao)
-      🔵 42A5F5  = Độ ẩm WARNING
-      💚 CCFF00  = System log / bình thường
-    Layout: Icon type ← Content (title + message + time) → Unread badge
-    Hiệu ứng: Card nền xanh nhạt khi chưa đọc, tối khi đã đọc.
-    Viền trái (4dp) = màu theo loại cảnh báo.
--->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardNotification"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="5dp"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="#0F1E12"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
-    app:strokeColor="#1E3B22"
-    app:strokeWidth="1dp">
+    app:cardBackgroundColor="#80FFFFFF"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="6dp"
+    app:cardMaxElevation="12dp"
+    app:strokeColor="#CCFFFFFF"
+    app:strokeWidth="1.5dp">
 
-    <!-- Indicator viền màu bên trái (set programmatically theo type) -->
-    <View
-        android:id="@+id/viewTypeIndicator"
-        android:layout_width="4dp"
-        android:layout_height="match_parent"
-        android:background="#CCFF00"/>
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:paddingStart="20dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
-        <!-- ── ICON TYPE (tròn, màu theo loại cảnh báo) ── -->
-        <!--
-            🌡️ TEMPERATURE: background đỏ mờ, icon nhiệt kế
-            💧 HUMIDITY:    background xanh mờ, icon nước
-            📡 SYSTEM:      background lime mờ, icon thiết bị
-            Background set dynamically trong NotificationAdapter.kt
-        -->
-        <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="14dp">
+        <ImageView
+            android:id="@+id/ivTypeIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_icon_notification_light"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#B2BEC3"
+            android:src="@drawable/ic_combined_notification_type"
+            tools:src="@drawable/ic_temp_humidity_combined" /> <!-- Đã sửa: Sử dụng drawable level-list mới -->
 
-            <!-- Vòng tròn background (set dynamically) -->
-            <View
-                android:id="@+id/viewIconBg"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_notif_icon_temp"/>
-
-            <!-- Icon emoji hoặc vector -->
-            <TextView
-                android:id="@+id/tvTypeIcon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="🌡️"
-                android:textSize="22sp"/>
-
-        </FrameLayout>
-
-        <!-- ── NỘI DUNG THÔNG BÁO ── -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="#2D3436"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvTime"
+            app:layout_constraintStart_toEndOf="@+id/ivTypeIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nhiệt độ quá cao!" />
 
-            <!-- Tiêu đề (bold khi chưa đọc) -->
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cảnh báo nhiệt độ"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#E8F5E9"
-                android:fontFamily="@font/montserrat_bold"
-                android:maxLines="1"
-                android:ellipsize="end"/>
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="#636E72"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            tools:text="Nhiệt độ hiện tại 35.5°C vượt ngưỡng 30°C." />
 
-            <!-- Giá trị + nội dung -->
-            <TextView
-                android:id="@+id/tvMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:text="Nhiệt độ 38°C vượt ngưỡng an toàn"
-                android:textSize="12sp"
-                android:textColor="#4A8C52"
-                android:fontFamily="@font/montserrat_medium"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:lineSpacingMultiplier="1.3"/>
-
-            <!-- Row dưới: timestamp + badge trạng thái -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:id="@+id/tvTimestamp"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="14:32 · 25/06/2025"
-                    android:textSize="10sp"
-                    android:textColor="#2D4A31"
-                    android:fontFamily="@font/montserrat_medium"/>
-
-                <!-- Badge "Chưa đọc" / "Đã đọc" -->
-                <TextView
-                    android:id="@+id/tvReadStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="● Mới"
-                    android:textSize="10sp"
-                    android:textColor="#CCFF00"
-                    android:fontFamily="@font/montserrat_bold"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- ── GIÁ TRỊ LỚN (hiện số cảm biến nổi bật) ── -->
-        <!--
-            Ví dụ: "38°C" hoặc "92%" ở góc phải.
-            Màu tương ứng type: đỏ cho nhiệt độ, xanh cho độ ẩm.
-        -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginStart="8dp">
+            android:fontFamily="@font/montserrat_medium"
+            android:textColor="#B2BEC3"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="14:30 18/05" />
 
-            <TextView
-                android:id="@+id/tvSensorValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="38°C"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#EF5350"
-                android:fontFamily="@font/montserrat_bold"/>
+        <View
+            android:id="@+id/viewUnreadDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/circle_lavender"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/tvSensorLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nhiệt độ"
-                android:textSize="9sp"
-                android:textColor="#3D1A1A"
-                android:fontFamily="@font/montserrat_medium"
-                android:gravity="center"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

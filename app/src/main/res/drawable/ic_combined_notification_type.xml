@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Mức 0: (Mặc định/Báo động chung) -->
+    <item android:maxLevel="0" android:drawable="@drawable/ic_temp_high" />
+
+    <!-- Mức 1: Nhiệt độ -->
+    <item android:maxLevel="1" android:drawable="@drawable/ic_temp_high" />
+
+    <!-- Mức 2: Độ ẩm -->
+    <item android:maxLevel="2" android:drawable="@drawable/ic_humidity" />
+
+    <!-- Mức 3: Cả Nhiệt độ và Độ ẩm -->
+    <item android:maxLevel="3" android:drawable="@drawable/ic_temp_humidity_combined" />
+</level-list>

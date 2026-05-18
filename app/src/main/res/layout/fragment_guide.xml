@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_sunset_gradient"
+    android:overScrollMode="never">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="90dp"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hỗ trợ hệ thống"
+            android:textSize="12sp"
+            android:textColor="#A29BFE"
+            android:fontFamily="@font/montserrat_medium"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hướng dẫn sử dụng"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#2D3436"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="24dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/header1"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="🌿 1. Bảng điều khiển"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2D3436"
+                        android:fontFamily="@font/montserrat_bold"/>
+
+                    <ImageView
+                        android:id="@+id/arrow1"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_down"
+                        app:tint="#636E72"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/content1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#33A29BFE"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Màn hình Tổng quan là nơi bạn theo dõi sức khỏe nhà kính trong thời gian thực:\n\n• Chỉ số cảm biến: Nhiệt độ và Độ ẩm được cập nhật tự động từ cảm biến DHT22 sau mỗi 5 giây.\n• Trạng thái thiết bị: Nhãn Online (kèm nhịp đập Lavender) báo hiệu kết nối tốt. Nhãn Offline báo mất tín hiệu.\n• Loại cây: Hiển thị profile cây trồng đang áp dụng để hệ thống giám sát đúng ngưỡng an toàn."
+                        android:textSize="13sp"
+                        android:textColor="#636E72"
+                        android:lineSpacingMultiplier="1.4"
+                        android:fontFamily="@font/montserrat_medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/header2"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="⚙️ 2. Ngưỡng cảnh báo"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2D3436"
+                        android:fontFamily="@font/montserrat_bold"/>
+
+                    <ImageView
+                        android:id="@+id/arrow2"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_down"
+                        app:tint="#636E72"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/content2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#33A29BFE"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Giúp bảo vệ cây trồng khỏi các điều kiện thời tiết cực đoan:\n\n• RangeSlider: Chạm và kéo hai đầu nút tròn để thiết lập mức Tối thiểu (Min) và Tối đa (Max) an toàn.\n• Ống thủy tinh: Dải chất lỏng màu chạy bên trong mô phỏng trực quan vùng an toàn bạn vừa thiết lập.\n• Lưu cấu hình: Nhấn nút Lưu ngưỡng để đồng bộ ngay lập tức lên Cloud cho hệ thống giám sát chạy ngầm."
+                        android:textSize="13sp"
+                        android:textColor="#636E72"
+                        android:lineSpacingMultiplier="1.4"
+                        android:fontFamily="@font/montserrat_medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/header3"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="💡 3. Điều khiển Đèn LED"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2D3436"
+                        android:fontFamily="@font/montserrat_bold"/>
+
+                    <ImageView
+                        android:id="@+id/arrow3"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_down"
+                        app:tint="#636E72"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/content3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#33A29BFE"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tối ưu hóa quá trình quang hợp bằng ánh sáng nhân tạo:\n\n• Chế độ Preset: Chọn nhanh các thẻ màu có sẵn (Nảy mầm, Ra hoa...) để hệ thống tự pha màu RGB tốt nhất cho cây.\n• Chế độ Thủ công: Kích hoạt Bánh xe màu sắc (Color Orbit) để tự do xoay chọn màu hoặc kéo thanh trượt R-G-B độc lập."
+                        android:textSize="13sp"
+                        android:textColor="#636E72"
+                        android:lineSpacingMultiplier="1.4"
+                        android:fontFamily="@font/montserrat_medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/header4"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="📈 4. Biểu đồ dữ liệu"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2D3436"
+                        android:fontFamily="@font/montserrat_bold"/>
+
+                    <ImageView
+                        android:id="@+id/arrow4"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_down"
+                        app:tint="#636E72"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/content4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#33A29BFE"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Theo dõi sự biến thiên môi trường theo thời gian dài:\n\n• Bộ lọc thời gian: Chuyển đổi linh hoạt giữa các chế độ xem 24 giờ qua, 7 ngày hoặc 30 ngày.\n• Cơ chế gộp: Để biểu đồ mượt mà, dữ liệu được tự động tính trung bình cộng theo từng giờ hoặc từng ngày.\n• Thống kê: Cung cấp thông số Thấp nhất, Trung bình và Cao nhất để bạn có cái nhìn tổng thể về hiệu quả canh tác."
+                        android:textSize="13sp"
+                        android:textColor="#636E72"
+                        android:lineSpacingMultiplier="1.4"
+                        android:fontFamily="@font/montserrat_medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/header5"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="🔔 5. Cảnh báo tự động"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#2D3436"
+                        android:fontFamily="@font/montserrat_bold"/>
+
+                    <ImageView
+                        android:id="@+id/arrow5"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_arrow_down"
+                        app:tint="#636E72"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/content5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#33A29BFE"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cơ chế giám sát thông minh hoạt động liên tục:\n\n• Mã màu cảnh báo: Viền Soft Rose (Đỏ hồng) báo lỗi nhiệt độ; Viền Soft Blue (Xanh dương) báo lỗi độ ẩm; Viền Cam hoàng hôn báo lỗi nghiêm trọng cả hai thông số.\n• Tương tác: Bạn có thể vuốt ngang một thẻ thông báo kính mờ để xóa nhanh khỏi danh sách."
+                        android:textSize="13sp"
+                        android:textColor="#636E72"
+                        android:lineSpacingMultiplier="1.4"
+                        android:fontFamily="@font/montserrat_medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

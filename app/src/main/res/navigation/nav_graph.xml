@@ -98,5 +98,9 @@
         android:name="com.example.greenhousesystem.ui.drawer.ThresholdFragment"
         android:label="Ngưỡng cảnh báo"
         tools:layout="@layout/fragment_threshold" />
-
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="com.example.greenhousesystem.ui.guide.GuideFragment"
+        android:label="Hướng dẫn"
+        tools:layout="@layout/fragment_guide" />
 </navigation>
