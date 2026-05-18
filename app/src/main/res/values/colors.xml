@@ -47,4 +47,111 @@
     <color name="red">#D32F2F</color>
     <color name="green_light">#A5D6A7</color>
 
-</resources>
+    <!--
+    colors.xml — Soft Sunset × Glassmorphism Light Mode
+    ══════════════════════════════════════════════════════════
+    Quy ước mã màu 8 ký tự: #AARRGGBB
+      AA = Alpha channel (hex):
+        FF = 100% opacity    (hoàn toàn đục)
+        CC = 80% opacity     (viền kính — bắt sáng)
+        99 = 60% opacity     (card kính đậm)
+        80 = 50% opacity     (card kính trung bình)
+        66 = 40% opacity     (card kính mỏng)
+        4D = 30% opacity     (overlay siêu mỏng)
+        33 = 20% opacity     (hint / divider)
+        1A = 10% opacity     (background tint nhẹ)
+
+    Glassmorphism "thật":
+      • Nền card: #66FFFFFF (trắng 40%) → trông như kính mờ
+      • Viền card: #CCFFFFFF (trắng 80%) → cạnh kính bắt sáng
+      • Shadow: màu accent mờ → tạo depth tự nhiên
+-->
+
+        <!-- ══ SOFT SUNSET CORE PALETTE ══════════════════════════════ -->
+        <color name="sunset_cream">#FDFCF0</color>         <!-- Warm Cream — nền chính -->
+        <color name="sunset_lavender">#A29BFE</color>      <!-- Lavender — Primary accent -->
+        <color name="sunset_pink">#FAB1A0</color>          <!-- Soft Pink — Secondary -->
+        <color name="sunset_gold">#FFEAA7</color>          <!-- Sunlight Gold — Surface tint -->
+        <color name="sunset_rose">#FF7675</color>          <!-- Rose — Alert / High temp -->
+        <color name="sunset_mint">#55EFC4</color>          <!-- Mint — Success / Low humid -->
+        <color name="sunset_sky">#74B9FF</color>           <!-- Sky Blue — Online status -->
+        <color name="sunset_amber">#FDCB6E</color>         <!-- Warm Amber — Warning -->
+        <color name="charcoal_dark">#2D3436</color>
+        <color name="charcoal_medium">#636E72</color>
+        <color name="charcoal_light">#B2BEC3</color>
+        <!-- ══ TEXT COLORS ═══════════════════════════════════════════ -->
+        <!-- Không dùng #000000 thuần — Dark Charcoal mềm mắt hơn -->
+        <color name="text_primary_light">#2D3436</color>   <!-- Dark Charcoal — body text -->
+        <color name="text_secondary_light">#636E72</color> <!-- Medium Gray — caption -->
+        <color name="text_hint_light">#B2BEC3</color>      <!-- Feather Gray — placeholder -->
+        <color name="text_on_primary">#FFFFFF</color>      <!-- White on lavender button -->
+        <color name="text_accent">#6C5CE7</color>          <!-- Deep Lavender — link / highlight -->
+
+        <!-- ══ BACKGROUND LAYERS ═════════════════════════════════════ -->
+        <color name="bg_gradient_start">#FFF0F5</color>    <!-- Blush Rose — gradient top -->
+        <color name="bg_gradient_center">#FDFCF0</color>   <!-- Warm Cream — gradient mid -->
+        <color name="bg_gradient_end">#FFF9E6</color>      <!-- Pale Gold — gradient bottom -->
+
+        <!-- ══ GLASSMORPHISM — CARD FILLS ════════════════════════════ -->
+        <color name="glass_fill">#80FFFFFF</color>
+        <color name="glass_stroke">#CCFFFFFF</color>
+        <color name="glass_stroke_lavender">#99A29BFE</color>
+        <color name="status_green">#00B894</color>
+        <color name="status_red">#D63031</color>
+        <color name="bg_status_normal">#3300B894</color>
+        <!--
+            Ba mức độ trong suốt khác nhau để tạo độ sâu visual:
+            • glass_thick   → Panel chính, sidebar, header cards
+            • glass_medium  → Sensor cards, info cards thông thường
+            • glass_thin    → Overlay, tooltip, background hints
+        -->
+        <color name="glass_thick">#99FFFFFF</color>        <!-- Trắng 60% — panel chính -->
+        <color name="glass_medium">#80FFFFFF</color>       <!-- Trắng 50% — card thông thường -->
+        <color name="glass_thin">#66FFFFFF</color>         <!-- Trắng 40% — card mỏng -->
+        <color name="glass_ultra_thin">#4DFFFFFF</color>   <!-- Trắng 30% — overlay nhẹ -->
+
+        <!-- ══ GLASSMORPHISM — BORDERS (STROKE) ══════════════════════ -->
+        <!--
+            Viền PHẢI sáng hơn fill của card để tạo "cạnh kính thật".
+            Viền trắng 80% trên nền card trắng 40-60% → đường viền
+            trông như ánh sáng đang phản chiếu qua cạnh kính.
+        -->
+        <color name="glass_stroke_bright">#CCFFFFFF</color> <!-- Trắng 80% — viền chính -->
+        <color name="glass_stroke_soft">#99FFFFFF</color>   <!-- Trắng 60% — viền nhỏ -->
+        <color name="glass_stroke_gold">#80FFEAA7</color>   <!-- Gold 50% — viền warm -->
+
+        <!-- ══ GLASSMORPHISM — SHADOWS ════════════════════════════════ -->
+        <!--
+            Shadow màu trung tính nhạt → tạo chiều sâu không cứng.
+            Không dùng đen thuần — sẽ phá vỡ cảm giác nhẹ nhàng.
+        -->
+        <color name="shadow_soft">#1A2D3436</color>        <!-- Charcoal 10% — shadow rất nhẹ -->
+        <color name="shadow_lavender">#33A29BFE</color>    <!-- Lavender 20% — glow đặc trưng -->
+        <color name="shadow_pink">#33FAB1A0</color>        <!-- Pink 20% — warm glow -->
+        <color name="shadow_gold">#4DFFEAA7</color>        <!-- Gold 30% — highlight shadow -->
+
+        <!-- ══ COMPONENT COLORS ══════════════════════════════════════ -->
+        <color name="divider_light">#33A29BFE</color>      <!-- Lavender 20% — divider tinh tế -->
+        <color name="ripple_light">#33A29BFE</color>       <!-- Lavender 20% — ripple effect -->
+        <color name="chip_bg_light">#4DFFEAA7</color>      <!-- Gold 30% — chip background -->
+        <color name="chip_text_light">#2D3436</color>      <!-- Charcoal — chip text -->
+        <color name="badge_bg">#FFFF7675</color>           <!-- Rose — badge notification -->
+
+        <!-- ══ STATUS / SENSOR COLORS ════════════════════════════════ -->
+        <color name="status_normal_bg">#4D55EFC4</color>   <!-- Mint 30% — bình thường -->
+        <color name="status_normal_text">#00B894</color>   <!-- Emerald — text bình thường -->
+        <color name="status_warning_bg">#4DFDCB6E</color>  <!-- Amber 30% — cảnh báo -->
+        <color name="status_warning_text">#E17055</color>  <!-- Burnt Orange — text cảnh báo -->
+        <color name="status_danger_bg">#4DFF7675</color>   <!-- Rose 30% — nguy hiểm -->
+        <color name="status_danger_text">#D63031</color>   <!-- Red — text nguy hiểm -->
+        <color name="status_offline_bg">#33B2BEC3</color>  <!-- Gray 20% — offline -->
+        <color name="status_offline_text">#636E72</color>  <!-- Gray — text offline -->
+        <color name="status_green_soft">#00B894</color>
+        <color name="status_orange_soft">#FAB1A0</color>
+        <color name="status_red_soft">#FF7675</color>
+        <color name="status_blue_soft">#74B9FF</color>
+        <!-- ══ BOTTOM NAV — LIGHT MODE ══════════════════════════════ -->
+        <color name="bottom_nav_bg_light">#F0FDFCF0</color> <!-- Cream 94% — nav background -->
+        <!-- Selector colors defined in res/color/ -->
+
+    </resources>
