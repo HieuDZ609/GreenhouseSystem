@@ -92,12 +92,13 @@ object AnimationHelper {
             val scaleX = ObjectAnimator.ofFloat(view, "scaleX", 0f, 1.8f)
             val scaleY = ObjectAnimator.ofFloat(view, "scaleY", 0f, 1.8f)
             val alpha = ObjectAnimator.ofFloat(view, "alpha", 0.8f, 0f)
+
             return AnimatorSet().apply {
                 playTogether(scaleX, scaleY, alpha)
                 duration = 1800L
                 startDelay = delay
                 interpolator = DecelerateInterpolator()
-                addListener(onEnd = { this.start() })  // lặp vô hạn
+                addListener(onEnd = { this.start() }) // Lặp vô hạn
             }
         }
 

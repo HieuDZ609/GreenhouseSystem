@@ -85,7 +85,7 @@
 // ════════════════════════════════════════════════════════════════
 #include <Arduino.h>
 #include <WiFi.h>
-#include <WiFiManager.h>           // Captive Portal — không hardcode WiFi
+#include <WiFiMulti.h>        // Captive Portal — không hardcode WiFi
 #include <Firebase_ESP_Client.h>   // Firebase Realtime Database
 #include <DHT.h>                   // Cảm biến DHT22
 #include <freertos/FreeRTOS.h>
@@ -157,7 +157,7 @@ FirebaseConfig firebaseConfig;
 //  🌡️ DHT SENSOR
 // ════════════════════════════════════════════════════════════════
 DHT dht(DHT_PIN, DHT_TYPE);
-
+WiFiMulti wifiMulti;
 
 // ════════════════════════════════════════════════════════════════
 //  🔒 MUTEX & BIẾN DÙNG CHUNG GIỮA 2 TASKS
@@ -326,27 +326,28 @@ void initPWM() {
 void initWiFi() {
     Serial.println("[WiFi] Khởi động WiFiManager...");
 
-    WiFiManager wifiManager;
+    WiFi.mode(WIFI_STA);
 
-    // Nếu sau 180 giây không ai cấu hình → reset và khởi động lại
-    wifiManager.setConfigPortalTimeout(180);
+    // Thêm các mạng WiFi (SSID, Password)
+    // Cú pháp: wifiMulti.addAP("Ten_WiFi", "Mat_Khau");
+    
+    wifiMulti.addAP("Phong 1", "11111111");       // Mạng ở nhà
+    wifiMulti.addAP("An Lanh", "anlanh123");          // Mạng ở trường
+    wifiMulti.addAP("iPhone_Hotspot", "phatwifi99");     // Mạng phát từ điện thoại
 
-    // Tắt debug output của WiFiManager để Serial sạch hơn (tuỳ chọn)
-    // wifiManager.setDebugOutput(false);
+    Serial.print("[WiFi] Đang kết nối...");
 
-    // autoConnect(apName, apPassword):
-    //   - Thử kết nối WiFi đã lưu
-    //   - Nếu thất bại → bật AP "Greenhouse_Setup" với password bên dưới
-    //   - Bỏ qua password (NULL) nếu muốn AP mở hoàn toàn
-    bool connected = wifiManager.autoConnect("Greenhouse_Setup", "green1234");
-
-    if (!connected) {
-        Serial.println("[WiFi] ❌ Timeout! Khởi động lại ESP32...");
-        delay(2000);
-        ESP.restart();
+    // Vòng lặp chờ kết nối
+    // wifiMulti.run() sẽ trả về WL_CONNECTED nếu kết nối thành công
+    while (wifiMulti.run() != WL_CONNECTED) {
+        Serial.print(".");
+        delay(500);
     }
 
-    Serial.print("[WiFi] ✅ Đã kết nối! IP: ");
+    Serial.println();
+    Serial.print("[WiFi] ✅ Đã kết nối thành công tới: ");
+    Serial.println(WiFi.SSID()); // In ra tên mạng đang kết nối
+    Serial.print("[WiFi] 🌐 Địa chỉ IP: ");
     Serial.println(WiFi.localIP());
 }
 
