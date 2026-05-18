@@ -1,8 +1,14 @@
 package com.example.greenhousesystem.ui.home
 
 import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -12,40 +18,32 @@ import com.example.greenhousesystem.R
 import com.example.greenhousesystem.databinding.FragmentHomeBinding
 import com.example.greenhousesystem.model.LedMode
 import com.example.greenhousesystem.model.PlantProfile
+import com.example.greenhousesystem.ui.SharedDeviceViewModel
 import com.example.greenhousesystem.ui.animation.AnimationHelper
 import com.example.greenhousesystem.ui.animation.AnimationHelper.setupSpringPress
-import com.example.greenhousesystem.ui.SharedDeviceViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 // ═══════════════════════════════════════════════════════════
-//  HomeFragment — "Smart Oasis" Dashboard chính
-//
-//  ✅ FIX:
-//  1. Xóa HomeViewModel riêng — tất cả data đọc từ SharedDeviceViewModel
-//     (activityViewModels) bằng StateFlow + repeatOnLifecycle.
-//  2. Xóa sharedViewModel.selectedDevice — field không tồn tại.
-//  3. Xóa viewModel.loadDeviceData() / toggleLed(deviceId, ...) — không tồn tại.
-//  4. Xóa AnimationHelper.postWithAnimation — không tồn tại.
-//  5. LED toggle gọi sharedViewModel.toggleLed(isOn) trực tiếp.
+//  HomeFragment — "Smart Oasis" Dashboard (Soft Sunset Theme)
+//  Tích hợp Glassmorphism, RenderEffect Blur và Visual Color Coding.
 // ═══════════════════════════════════════════════════════════
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    // ✅ Chỉ dùng SharedDeviceViewModel — single source of truth
+    // Sử dụng chung ViewModel với Activity để đồng bộ dữ liệu
     private val sharedViewModel: SharedDeviceViewModel by activityViewModels()
 
     private var isUpdatingSwitch = false
-    private var wasOnline        = false
+    private var wasOnline = false
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -53,17 +51,29 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        applyGlassBlur() // Bật hiệu ứng mờ kính cho các Card
         setupEntrance()
         setupSwipeRefresh()
         setupLedSwitch()
         setupSpringButtons()
-        // ✅ Chỉ gọi observeViewModel() 1 lần (file gốc gọi 2 lần)
         observeViewModel()
     }
 
     // ─────────────────────────────────────────────────────────
-    //  STAGGERED ENTRANCE
+    //  GLASSMORPHISM & UI SETUP
     // ─────────────────────────────────────────────────────────
+    private fun applyGlassBlur() {
+        // Chỉ áp dụng Blur cho Android 12 trở lên (API 31+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val blur = RenderEffect.createBlurEffect(20f, 20f, Shader.TileMode.CLAMP)
+            binding.cardTemperature.setRenderEffect(blur)
+            binding.cardHumidity.setRenderEffect(blur)
+            binding.cardLed.setRenderEffect(blur)
+            binding.cardDeviceStatus.setRenderEffect(blur)
+        }
+    }
+
     private fun setupEntrance() {
         val viewsToAnimate = listOf(
             binding.layoutHeader,
@@ -79,68 +89,54 @@ class HomeFragment : Fragment() {
     private fun setupSpringButtons() {
         binding.btnNotification.setupSpringPress()
         binding.switchLed.setupSpringPress()
+        binding.btnThemeToggle.setupSpringPress()
     }
 
     private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setColorSchemeColors(Color.parseColor("#84CC16"))
+        // Màu vòng xoay (Soft green)
+        binding.swipeRefresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.status_green_soft))
         binding.swipeRefresh.setOnRefreshListener {
-            // ✅ Firebase realtime tự cập nhật, chỉ cần tắt indicator sau 1s
-            binding.swipeRefresh.postDelayed(
-                { binding.swipeRefresh.isRefreshing = false },
-                1000L
-            )
+            binding.swipeRefresh.postDelayed({ binding.swipeRefresh.isRefreshing = false }, 1000L)
         }
     }
 
     private fun setupLedSwitch() {
         binding.switchLed.setOnCheckedChangeListener { _, isChecked ->
             if (!isUpdatingSwitch) {
-                // ✅ Gọi SharedDeviceViewModel.toggleLed() — tồn tại và đúng signature
                 sharedViewModel.toggleLed(isChecked)
             }
         }
     }
 
     // ─────────────────────────────────────────────────────────
-    //  OBSERVE — Dùng StateFlow + repeatOnLifecycle
-    //
-    //  ✅ Không dùng LiveData .observe() nữa vì SharedDeviceViewModel
-    //  expose StateFlow. repeatOnLifecycle(STARTED) tự pause/resume
-    //  an toàn theo lifecycle của Fragment.
+    //  OBSERVE VIEWMODEL (STATE FLOW)
     // ─────────────────────────────────────────────────────────
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                // Sensor data (nhiệt độ + độ ẩm)
+                // Lắng nghe dữ liệu cảm biến
                 launch {
                     sharedViewModel.sensorData.collectLatest { data ->
-                        updateSensorUi(
-                            temp      = data.temperature,
-                            humid     = data.humidity,
-                            timestamp = data.timestamp
-                        )
+                        updateSensorUi(data.temperature, data.humidity, data.timestamp)
                     }
                 }
 
-                // Device status (online / offline)
+                // Lắng nghe trạng thái thiết bị
                 launch {
                     sharedViewModel.deviceStatus.collectLatest { status ->
-                        updateDeviceStatusUi(
-                            isOnline = status.status == "online",
-                            lastSeen = status.lastSeen
-                        )
+                        updateDeviceStatusUi(status.status == "online", status.lastSeen)
                     }
                 }
 
-                // LED status
+                // Lắng nghe trạng thái đèn LED
                 launch {
                     sharedViewModel.ledStatus.collectLatest { led ->
                         updateLedUi(led.isOn, led.red, led.green, led.blue, led.mode)
                     }
                 }
 
-                // Cây đang chọn
+                // Lắng nghe cấu hình cây
                 launch {
                     sharedViewModel.selectedPlant.collectLatest { plant ->
                         plant ?: return@collectLatest
@@ -148,16 +144,13 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                // Alert message
+                // Lắng nghe thông báo lỗi/vượt ngưỡng
                 launch {
                     sharedViewModel.alertMessage.collectLatest { message ->
                         if (message != null) {
                             binding.tvAlertMessage.text = message
                             if (binding.cardAlert.visibility != View.VISIBLE) {
-                                AnimationHelper.showAlert(
-                                    binding.cardAlert,
-                                    binding.iconAlertContainer
-                                )
+                                AnimationHelper.showAlert(binding.cardAlert, binding.iconAlertContainer)
                             }
                         } else {
                             if (binding.cardAlert.visibility == View.VISIBLE) {
@@ -171,42 +164,46 @@ class HomeFragment : Fragment() {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  UPDATE SENSOR UI
+    //  CẬP NHẬT GIAO DIỆN SENSOR (GIỮ HIỆU ỨNG KÍNH)
     // ─────────────────────────────────────────────────────────
     private fun updateSensorUi(temp: Double, humid: Double, timestamp: Long) {
-        // Lấy plant từ StateFlow hiện tại (không cần LiveData)
         val plant = sharedViewModel.selectedPlant.value
 
-        // ── Nhiệt độ ─────────────────────────────────────────
+        // 1. Cập nhật Nhiệt độ
         binding.gaugeTemperature.setValue(temp.toFloat())
         AnimationHelper.animateCounter(binding.tvTemperature, temp.toFloat(), "°C")
 
         val tempState = getTempState(temp, plant)
-        binding.tvTempStatus.text = tempState.label
-        binding.tvTempStatus.setTextColor(Color.parseColor(tempState.color))
-        binding.cardTemperature.setCardBackgroundColor(Color.parseColor(tempState.cardBg))
+        val tempColor = ContextCompat.getColor(requireContext(), tempState.colorRes)
 
-        // ── Độ ẩm ─────────────────────────────────────────────
+        binding.tvTempStatus.text = tempState.label
+        binding.tvTempStatus.setTextColor(tempColor)
+        // Thay đổi viền card thay vì đổi nền để giữ hiệu ứng kính
+        binding.cardTemperature.strokeColor = tempColor
+
+        // 2. Cập nhật Độ ẩm
         binding.gaugeHumidity.setValue(humid.toFloat())
         AnimationHelper.animateCounter(binding.tvHumidity, humid.toFloat(), "%")
 
         val humidState = getHumidState(humid, plant)
-        binding.tvHumidityStatus.text = humidState.label
-        binding.tvHumidityStatus.setTextColor(Color.parseColor(humidState.color))
-        binding.cardHumidity.setCardBackgroundColor(Color.parseColor(humidState.cardBg))
+        val humidColor = ContextCompat.getColor(requireContext(), humidState.colorRes)
 
+        binding.tvHumidityStatus.text = humidState.label
+        binding.tvHumidityStatus.setTextColor(humidColor)
+        binding.cardHumidity.strokeColor = humidColor
+
+        // 3. Thời gian
         binding.tvLastUpdate.text = "Cập nhật: ${formatTime(timestamp)}"
     }
 
     // ─────────────────────────────────────────────────────────
-    //  UPDATE DEVICE STATUS UI
+    //  CẬP NHẬT TRẠNG THÁI THIẾT BỊ
     // ─────────────────────────────────────────────────────────
     private fun updateDeviceStatusUi(isOnline: Boolean, lastSeen: Long) {
         if (isOnline) {
             binding.viewStatusDot.setBackgroundResource(R.drawable.circle_green)
             binding.tvDeviceStatus.text = "Online"
-            binding.tvDeviceStatus.setTextColor(Color.parseColor("#84CC16"))
-            binding.tvLastSeen.text = ""
+            binding.tvDeviceStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.status_green_soft))
 
             if (!wasOnline) {
                 AnimationHelper.startPulse(binding.viewPulseOuter, binding.viewPulseMiddle)
@@ -216,10 +213,7 @@ class HomeFragment : Fragment() {
         } else {
             binding.viewStatusDot.setBackgroundResource(R.drawable.circle_gray)
             binding.tvDeviceStatus.text = "Offline"
-            binding.tvDeviceStatus.setTextColor(Color.parseColor("#4A5A4E"))
-            if (lastSeen > 0) {
-                binding.tvLastSeen.text = "Lần cuối: ${formatTime(lastSeen)}"
-            }
+            binding.tvDeviceStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.charcoal_light))
 
             if (wasOnline) {
                 AnimationHelper.stopPulse(binding.viewPulseOuter, binding.viewPulseMiddle)
@@ -230,7 +224,7 @@ class HomeFragment : Fragment() {
     }
 
     // ─────────────────────────────────────────────────────────
-    //  UPDATE LED UI
+    //  CẬP NHẬT GIAO DIỆN LED
     // ─────────────────────────────────────────────────────────
     private fun updateLedUi(isOn: Boolean, r: Int, g: Int, b: Int, modeStr: String) {
         isUpdatingSwitch = true
@@ -250,34 +244,34 @@ class HomeFragment : Fragment() {
             }
             .start()
 
-        binding.viewLedGlow.strokeColor =
-            if (isOn) ledColor else Color.parseColor("#1A2A1E")
+        // Card LED glow nhẹ theo màu đèn
+        binding.viewLedGlow.strokeColor = if (isOn) ledColor else ContextCompat.getColor(requireContext(), R.color.glass_stroke_soft)
 
         val mode = try { LedMode.valueOf(modeStr) } catch (e: Exception) { LedMode.MANUAL }
         binding.tvLedMode.text = "${mode.icon} ${mode.displayName}"
-        binding.tvLedRgb.text  = "R:$r  G:$g  B:$b"
+        binding.tvLedRgb.text = "R:$r  G:$g  B:$b"
     }
 
     // ─────────────────────────────────────────────────────────
-    //  HELPERS — Trạng thái sensor theo ngưỡng cây
+    //  HÀM PHỤ TRỢ (HELPER)
     // ─────────────────────────────────────────────────────────
     private fun getTempState(temp: Double, plant: PlantProfile?): SensorState {
-        if (plant == null) return SensorState("Đang tải...", "#4A8C52", "#0F1E12")
+        if (plant == null) return SensorState("Đang tải...", R.color.text_hint_light)
         return when {
-            temp > plant.tempMax         -> SensorState("⚠️ Quá cao!",       "#FF6B6B", "#2D0A0A")
-            temp < plant.tempMin         -> SensorState("⚠️ Quá thấp!",      "#64B5F6", "#0A1520")
-            temp > plant.tempMax - 2     -> SensorState("⚡ Gần ngưỡng cao", "#FFB74D", "#2A1A08")
-            else                         -> SensorState("✅ Bình thường",    "#84CC16", "#0F1E12")
+            temp > plant.tempMax -> SensorState("⚠️ Quá cao", R.color.status_red_soft)
+            temp < plant.tempMin -> SensorState("⚠️ Quá thấp", R.color.status_blue_soft)
+            temp > plant.tempMax - 2 -> SensorState("⚡ Gần ngưỡng", R.color.status_orange_soft)
+            else -> SensorState("✅ Bình thường", R.color.status_green_soft)
         }
     }
 
     private fun getHumidState(humidity: Double, plant: PlantProfile?): SensorState {
-        if (plant == null) return SensorState("Đang tải...", "#4A70A8", "#0D1A2A")
+        if (plant == null) return SensorState("Đang tải...", R.color.text_hint_light)
         return when {
-            humidity > plant.humidityMax     -> SensorState("⚠️ Quá cao!",       "#FF6B6B", "#1A0A0D")
-            humidity < plant.humidityMin     -> SensorState("⚠️ Quá thấp!",      "#64B5F6", "#0A1525")
-            humidity > plant.humidityMax - 5 -> SensorState("⚡ Gần ngưỡng cao", "#FFB74D", "#1A1208")
-            else                             -> SensorState("✅ Bình thường",    "#42A5F5", "#0D1A2A")
+            humidity > plant.humidityMax -> SensorState("⚠️ Quá cao", R.color.status_red_soft)
+            humidity < plant.humidityMin -> SensorState("⚠️ Quá thấp", R.color.status_blue_soft)
+            humidity > plant.humidityMax - 5 -> SensorState("⚡ Gần ngưỡng", R.color.status_orange_soft)
+            else -> SensorState("✅ Bình thường", R.color.status_green_soft)
         }
     }
 
@@ -294,8 +288,8 @@ class HomeFragment : Fragment() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// Data class UI dùng Resource ID (Tối ưu UI/UX)
 data class SensorState(
-    val label : String,
-    val color : String,
-    val cardBg: String
+    val label: String,
+    val colorRes: Int
 )

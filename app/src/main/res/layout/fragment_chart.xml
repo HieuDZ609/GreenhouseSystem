@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_chart_new.xml — Màn hình biểu đồ "Eco-Digital Dark"
-    Cấu trúc:
-      • Filter Strip (Hôm nay / 7 ngày / 30 ngày) với lime glow
-      • Shimmer placeholder khi loading
-      • Card nhiệt độ: chart + stats min/avg/max
-      • Card độ ẩm:    chart + stats min/avg/max
--->
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -17,7 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_eco_dark"
+        android:background="@drawable/bg_sunset_gradient"
         android:overScrollMode="never">
 
         <LinearLayout
@@ -28,7 +20,6 @@
             android:paddingTop="16dp"
             android:paddingBottom="32dp">
 
-            <!-- ══ HEADER ══ -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -47,7 +38,7 @@
                         android:layout_height="wrap_content"
                         android:text="Phân tích"
                         android:textSize="12sp"
-                        android:textColor="#4A8C52"
+                        android:textColor="#A29BFE"
                         android:fontFamily="@font/montserrat_medium"
                         android:letterSpacing="0.1"/>
 
@@ -57,20 +48,19 @@
                         android:text="Lịch sử dữ liệu"
                         android:textSize="22sp"
                         android:textStyle="bold"
-                        android:textColor="#E8F5E9"
+                        android:textColor="#2D3436"
                         android:fontFamily="@font/montserrat_bold"/>
 
                 </LinearLayout>
 
-                <!-- Badge "Demo data" khi không có data thật -->
                 <TextView
                     android:id="@+id/tvMockBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Demo data"
                     android:textSize="10sp"
-                    android:textColor="#0A1A0A"
-                    android:background="@drawable/bg_badge_amber"
+                    android:textColor="#D63031"
+                    android:background="@drawable/bg_badge_sunset"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
                     android:fontFamily="@font/montserrat_bold"
@@ -78,20 +68,14 @@
 
             </LinearLayout>
 
-            <!-- ══ FILTER STRIP ══
-                 3 nút chọn khoảng thời gian.
-                 Nút active: background lime mờ + text lime sáng + scale 1.05.
-                 Nút inactive: transparent + text mờ.
-                 Được wrap trong card glassmorphic.
-            -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#0F1E12"
+                app:cardBackgroundColor="#66FFFFFF"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#1E3B22"
+                app:strokeColor="#CCFFFFFF"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -109,11 +93,11 @@
                         android:text="Hôm nay"
                         android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#84CC16"
+                        android:textColor="#6C5CE7"
                         android:fontFamily="@font/montserrat_bold"
                         android:clickable="true"
                         android:focusable="true"
-                        android:background="@drawable/bg_filter_active"/>
+                        android:background="@drawable/bg_filter_active_light"/>
 
                     <TextView
                         android:id="@+id/btnFilterWeek"
@@ -124,8 +108,8 @@
                         android:text="7 ngày"
                         android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#4A6A4E"
-                        android:fontFamily="@font/montserrat_bold"
+                        android:textColor="#636E72"
+                        android:fontFamily="@font/montserrat_medium"
                         android:clickable="true"
                         android:focusable="true"/>
 
@@ -138,24 +122,23 @@
                         android:text="30 ngày"
                         android:textSize="13sp"
                         android:textStyle="bold"
-                        android:textColor="#4A6A4E"
-                        android:fontFamily="@font/montserrat_bold"
+                        android:textColor="#636E72"
+                        android:fontFamily="@font/montserrat_medium"
                         android:clickable="true"
                         android:focusable="true"/>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ══ CARD NHIỆT ĐỘ ══ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#0F1E12"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#1E3B22"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="#80FFFFFF"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="4dp"
+                app:strokeColor="#CCFFFFFF"
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -163,7 +146,6 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Tiêu đề + ngưỡng -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -178,7 +160,7 @@
                             android:text="🌡️ Nhiệt độ (°C)"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:textColor="#C8E6C9"
+                            android:textColor="#2D3436"
                             android:fontFamily="@font/montserrat_bold"/>
 
                         <TextView
@@ -187,79 +169,76 @@
                             android:layout_height="wrap_content"
                             android:text="Ngưỡng: --°C ~ --°C"
                             android:textSize="10sp"
-                            android:textColor="#3A6A3E"
+                            android:textColor="#B2BEC3"
                             android:fontFamily="@font/montserrat_medium"/>
 
                     </LinearLayout>
 
-                    <!-- Shimmer placeholder khi loading -->
                     <com.facebook.shimmer.ShimmerFrameLayout
                         android:id="@+id/shimmerTemp"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:visibility="visible"
-                        app:shimmer_base_color="#1A2D1E"
-                        app:shimmer_highlight_color="#2D4A31"
+                        app:shimmer_base_color="#33A29BFE"
+                        app:shimmer_highlight_color="#80FFFFFF"
                         app:shimmer_auto_start="true">
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:background="@drawable/bg_shimmer_rect"/>
+                            android:background="@drawable/bg_shimmer_rect_light"/>
 
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
-                    <!-- Chart thật (ẩn khi loading) -->
                     <com.github.mikephil.charting.charts.LineChart
                         android:id="@+id/chartTemperature"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:visibility="invisible"/>
 
-                    <!-- Stats row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="16dp"
-                        android:background="@drawable/bg_stats_row"
+                        android:background="@drawable/bg_stats_row_light"
                         android:padding="12dp">
 
                         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                             android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Thấp nhất" android:textSize="10sp" android:textColor="#4A6A4E"
+                                android:text="Thấp nhất" android:textSize="10sp" android:textColor="#636E72"
                                 android:fontFamily="@font/montserrat_medium"/>
                             <TextView android:id="@+id/tvTempMin" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" android:text="--°C"
                                 android:textSize="20sp" android:textStyle="bold"
-                                android:textColor="#64B5F6" android:fontFamily="@font/montserrat_bold"/>
+                                android:textColor="#74B9FF" android:fontFamily="@font/montserrat_bold"/>
                         </LinearLayout>
 
-                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#1A3B22"/>
+                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#33A29BFE"/>
 
                         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                             android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Trung bình" android:textSize="10sp" android:textColor="#4A6A4E"
+                                android:text="Trung bình" android:textSize="10sp" android:textColor="#636E72"
                                 android:fontFamily="@font/montserrat_medium"/>
                             <TextView android:id="@+id/tvTempAvg" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" android:text="--°C"
                                 android:textSize="20sp" android:textStyle="bold"
-                                android:textColor="#84CC16" android:fontFamily="@font/montserrat_bold"/>
+                                android:textColor="#A29BFE" android:fontFamily="@font/montserrat_bold"/>
                         </LinearLayout>
 
-                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#1A3B22"/>
+                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#33A29BFE"/>
 
                         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                             android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Cao nhất" android:textSize="10sp" android:textColor="#4A6A4E"
+                                android:text="Cao nhất" android:textSize="10sp" android:textColor="#636E72"
                                 android:fontFamily="@font/montserrat_medium"/>
                             <TextView android:id="@+id/tvTempMax" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" android:text="--°C"
                                 android:textSize="20sp" android:textStyle="bold"
-                                android:textColor="#EF5350" android:fontFamily="@font/montserrat_bold"/>
+                                android:textColor="#FF7675" android:fontFamily="@font/montserrat_bold"/>
                         </LinearLayout>
 
                     </LinearLayout>
@@ -267,16 +246,15 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ══ CARD ĐỘ ẨM ══ (cấu trúc tương tự card nhiệt độ) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#0D1A2A"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#1A3550"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="#80FFFFFF"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="4dp"
+                app:strokeColor="#CCFFFFFF"
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -298,7 +276,7 @@
                             android:text="💧 Độ ẩm (%)"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:textColor="#BBDEFB"
+                            android:textColor="#2D3436"
                             android:fontFamily="@font/montserrat_bold"/>
 
                         <TextView
@@ -307,7 +285,7 @@
                             android:layout_height="wrap_content"
                             android:text="Ngưỡng: --% ~ --%"
                             android:textSize="10sp"
-                            android:textColor="#1E4A70"
+                            android:textColor="#B2BEC3"
                             android:fontFamily="@font/montserrat_medium"/>
 
                     </LinearLayout>
@@ -317,11 +295,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:visibility="visible"
-                        app:shimmer_base_color="#0D2040"
-                        app:shimmer_highlight_color="#1A3560"
+                        app:shimmer_base_color="#3374B9FF"
+                        app:shimmer_highlight_color="#80FFFFFF"
                         app:shimmer_auto_start="true">
                         <View android:layout_width="match_parent" android:layout_height="200dp"
-                            android:background="@drawable/bg_shimmer_rect"/>
+                            android:background="@drawable/bg_shimmer_rect_light"/>
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <com.github.mikephil.charting.charts.LineChart
@@ -335,44 +313,44 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="16dp"
-                        android:background="@drawable/bg_stats_row_blue"
+                        android:background="@drawable/bg_stats_row_light"
                         android:padding="12dp">
 
                         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                             android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Thấp nhất" android:textSize="10sp" android:textColor="#1A4A70"
+                                android:text="Thấp nhất" android:textSize="10sp" android:textColor="#636E72"
                                 android:fontFamily="@font/montserrat_medium"/>
                             <TextView android:id="@+id/tvHumidMin" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" android:text="--%"
                                 android:textSize="20sp" android:textStyle="bold"
-                                android:textColor="#64B5F6" android:fontFamily="@font/montserrat_bold"/>
+                                android:textColor="#74B9FF" android:fontFamily="@font/montserrat_bold"/>
                         </LinearLayout>
 
-                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#1A3560"/>
+                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#33A29BFE"/>
 
                         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                             android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Trung bình" android:textSize="10sp" android:textColor="#1A4A70"
+                                android:text="Trung bình" android:textSize="10sp" android:textColor="#636E72"
                                 android:fontFamily="@font/montserrat_medium"/>
                             <TextView android:id="@+id/tvHumidAvg" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" android:text="--%"
                                 android:textSize="20sp" android:textStyle="bold"
-                                android:textColor="#42A5F5" android:fontFamily="@font/montserrat_bold"/>
+                                android:textColor="#A29BFE" android:fontFamily="@font/montserrat_bold"/>
                         </LinearLayout>
 
-                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#1A3560"/>
+                        <View android:layout_width="1dp" android:layout_height="36dp" android:background="#33A29BFE"/>
 
                         <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                             android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                                android:text="Cao nhất" android:textSize="10sp" android:textColor="#1A4A70"
+                                android:text="Cao nhất" android:textSize="10sp" android:textColor="#636E72"
                                 android:fontFamily="@font/montserrat_medium"/>
                             <TextView android:id="@+id/tvHumidMax" android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" android:text="--%"
                                 android:textSize="20sp" android:textStyle="bold"
-                                android:textColor="#EF5350" android:fontFamily="@font/montserrat_bold"/>
+                                android:textColor="#FF7675" android:fontFamily="@font/montserrat_bold"/>
                         </LinearLayout>
 
                     </LinearLayout>

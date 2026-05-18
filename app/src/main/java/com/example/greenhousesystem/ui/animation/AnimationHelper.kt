@@ -110,6 +110,11 @@ object AnimationHelper {
         pulseMiddle.animate().cancel()
         pulseOuter.alpha = 0f
         pulseMiddle.alpha = 0f
+        // Reset scale để không bị lỗi layout khi chạy lại
+        pulseOuter.scaleX = 0f
+        pulseOuter.scaleY = 0f
+        pulseMiddle.scaleX = 0f
+        pulseMiddle.scaleY = 0f
     }
 
     // ─────────────────────────────────────────────────────────
