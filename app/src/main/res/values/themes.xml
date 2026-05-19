@@ -49,7 +49,7 @@
         <item name="colorOnSurface">@color/text_primary_light</item>
         <item name="colorSurfaceVariant">#F0EEF8</item>  <!-- Lavender tint nhẹ -->
         <item name="colorOnSurfaceVariant">@color/text_secondary_light</item>
-        <item name="colorBackground">@color/sunset_cream</item>
+        <item name="android:colorBackground">@color/sunset_cream</item>
         <item name="colorOnBackground">@color/text_primary_light</item>
 
         <!-- Outline và Divider -->
