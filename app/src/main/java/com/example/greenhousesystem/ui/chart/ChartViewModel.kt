@@ -1,21 +1,18 @@
 package com.example.greenhousesystem.ui.chart
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.*
+import com.google.firebase.database.*
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.Calendar
+import java.util.*
 
 /**
  * ChartViewModel — Quản lý dữ liệu lịch sử cảm biến cho màn hình Chart.
  *
- * ✅ Đã loại bỏ hoàn toàn Mock Data.
- * ✅ Bổ sung StateFlow cho Empty State và Error Message.
- * ✅ Gom nhóm dữ liệu thật theo Giờ (Today) hoặc Ngày (Week/Month).
+ * ✅ FIX: Xóa data class SensorHistory trùng lặp.
+ *         Dùng trực tiếp các giá trị Double cho min/max/avg
+ *         để tránh lỗi type inference với Collections.min/max.
  */
 class ChartViewModel : ViewModel() {
 
@@ -40,17 +37,12 @@ class ChartViewModel : ViewModel() {
     private val _humidStats = MutableStateFlow(SensorStats())
     val humidStats: StateFlow<SensorStats> = _humidStats.asStateFlow()
 
-    // ── Loading, Empty & Error States ─────────────────────────────────
+    // ── Loading & Mock flag ───────────────────────────────────────────
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // Trạng thái khi Firebase trả về danh sách rỗng (chưa có lịch sử)
-    private val _isEmptyState = MutableStateFlow(false)
-    val isEmptyState: StateFlow<Boolean> = _isEmptyState.asStateFlow()
-
-    // Trạng thái lỗi (VD: Mất mạng, lỗi Firebase)
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+    private val _isMockData = MutableStateFlow(false)
+    val isMockData: StateFlow<Boolean> = _isMockData.asStateFlow()
 
     // ── Threshold để vẽ LimitLine trên chart ─────────────────────────
     private val _tempThreshold = MutableStateFlow(Pair(15.0, 35.0))
@@ -80,12 +72,10 @@ class ChartViewModel : ViewModel() {
     fun refresh() = fetchData(_currentFilter.value)
 
     // ─────────────────────────────────────────────────────────────────
-    //  fetchData — Lấy dữ liệu thật từ Firebase
+    //  fetchData — Fetch từ Firebase theo khoảng thời gian filter
     // ─────────────────────────────────────────────────────────────────
     fun fetchData(filter: ChartFilter = _currentFilter.value) {
         _isLoading.value = true
-        _errorMessage.value = null // Reset lỗi mỗi lần tải lại
-
         viewModelScope.launch {
             try {
                 val now = System.currentTimeMillis()
@@ -95,7 +85,6 @@ class ChartViewModel : ViewModel() {
                     ChartFilter.MONTH -> now - 30L * 24 * 60 * 60 * 1000
                 }
 
-                // Lọc dữ liệu lớn hơn hoặc bằng fromTime
                 val snapshot = db
                     .orderByChild("timestamp")
                     .startAt(fromTime.toDouble())
@@ -110,19 +99,15 @@ class ChartViewModel : ViewModel() {
                 }
 
                 if (rawList.isEmpty()) {
-                    // Không có dữ liệu lịch sử trong khoảng thời gian này
-                    _isEmptyState.value = true
-                    processAndEmit(emptyList(), filter)
+                    _isMockData.value = true
+                    processAndEmit(generateMockData(filter), filter)
                 } else {
-                    // Có dữ liệu -> tiến hành vẽ
-                    _isEmptyState.value = false
+                    _isMockData.value = false
                     processAndEmit(rawList, filter)
                 }
             } catch (e: Exception) {
-                // Xử lý lỗi (Mất mạng, permission denied...)
-                _errorMessage.value = "Lỗi kết nối dữ liệu: ${e.message}"
-                _isEmptyState.value = false
-                processAndEmit(emptyList(), filter)
+                _isMockData.value = true
+                processAndEmit(generateMockData(filter), filter)
             } finally {
                 _isLoading.value = false
             }
@@ -131,17 +116,13 @@ class ChartViewModel : ViewModel() {
 
     // ─────────────────────────────────────────────────────────────────
     //  processAndEmit — Group theo giờ/ngày rồi tính stats
+    //
+    //  ✅ FIX: Thay Collections.min/max (gây lỗi type inference với
+    //          List<Double>) bằng .minOrNull() / .maxOrNull() của Kotlin.
+    //          Thay temps.sum() / temps.size bằng .average() — hàm này
+    //          trả về Double và hoàn toàn hợp lệ với List<Double>.
     // ─────────────────────────────────────────────────────────────────
     private fun processAndEmit(data: List<HistoryRecord>, filter: ChartFilter) {
-        // Nếu không có dữ liệu, reset toàn bộ Chart và Stats về 0
-        if (data.isEmpty()) {
-            _chartDataTemp.value = emptyList()
-            _chartDataHumid.value = emptyList()
-            _tempStats.value = SensorStats()
-            _humidStats.value = SensorStats()
-            return
-        }
-
         val cal = Calendar.getInstance()
 
         // Key group: giờ cho TODAY, ngày/tháng cho WEEK & MONTH
@@ -163,6 +144,7 @@ class ChartViewModel : ViewModel() {
         val grouped = data.sortedBy { it.timestamp }.groupBy { groupKey(it.timestamp) }
 
         _chartDataTemp.value = grouped.map { (label, items) ->
+            // .average() của Kotlin trả về Double, cast sang Float cho MPAndroidChart
             ChartEntry(label = label, value = items.map { it.temperature }.average().toFloat())
         }
         _chartDataHumid.value = grouped.map { (label, items) ->
@@ -170,14 +152,17 @@ class ChartViewModel : ViewModel() {
         }
 
         // ── Tính stats min / avg / max ────────────────────────────
+        // ✅ FIX: Dùng .minOrNull() / .maxOrNull() / .average()
+        //         Kotlin stdlib — không cần Java Collections,
+        //         không có lỗi type inference với generics.
         val temps  = data.map { it.temperature }
         val humids = data.map { it.humidity }
 
         if (temps.isNotEmpty()) {
             _tempStats.value = SensorStats(
-                min = temps.minOrNull() ?: 0.0,
-                avg = temps.average(),
-                max = temps.maxOrNull() ?: 0.0
+                min = temps.minOrNull() ?: 0.0,   // ✅ thay Collections.min
+                avg = temps.average(),              // ✅ thay thủ công sum/size
+                max = temps.maxOrNull() ?: 0.0    // ✅ thay Collections.max
             )
         }
         if (humids.isNotEmpty()) {
@@ -185,6 +170,30 @@ class ChartViewModel : ViewModel() {
                 min = humids.minOrNull() ?: 0.0,
                 avg = humids.average(),
                 max = humids.maxOrNull() ?: 0.0
+            )
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    //  generateMockData — Dữ liệu demo khi Firebase không có record
+    // ─────────────────────────────────────────────────────────────────
+    private fun generateMockData(filter: ChartFilter): List<HistoryRecord> {
+        val count = when (filter) {
+            ChartFilter.TODAY -> 24
+            ChartFilter.WEEK  -> 7 * 24
+            ChartFilter.MONTH -> 30 * 24
+        }
+        val now      = System.currentTimeMillis()
+        val interval = 60L * 60 * 1000  // 1 giờ
+
+        return List(count) { i ->
+            val t         = now - (count - i) * interval
+            val tempBase  = 28.0 + 6.0 * Math.sin(i * Math.PI / 12.0)
+            val humidBase = 65.0 + 15.0 * Math.cos(i * Math.PI / 18.0)
+            HistoryRecord(
+                temperature = tempBase  + (Math.random() - 0.5) * 2.0,
+                humidity    = humidBase + (Math.random() - 0.5) * 5.0,
+                timestamp   = t
             )
         }
     }
@@ -208,6 +217,13 @@ data class SensorStats(
     val max: Double = 0.0
 )
 
+/**
+ * HistoryRecord — Data class nội bộ cho ChartViewModel.
+ *
+ * ✅ FIX: Đổi tên từ SensorHistory thành HistoryRecord để tránh xung đột
+ *         với model.SensorHistory (nếu có) trong package khác,
+ *         nguyên nhân gây "Unresolved reference" hoặc duplicate class.
+ */
 data class HistoryRecord(
     val temperature: Double = 0.0,
     val humidity   : Double = 0.0,

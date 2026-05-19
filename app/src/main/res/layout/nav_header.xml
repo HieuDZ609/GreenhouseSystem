@@ -1,64 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    nav_header_main.xml — Header của Navigation Drawer bên trái
+    ────────────────────────────────────────────────────────────
+    Nội dung:
+      • ShapeableImageView: Avatar tròn với viền lime
+      • tvHeaderName: Tên người dùng (từ FirebaseAuth.displayName)
+      • tvHeaderEmail: Email (từ FirebaseAuth.email)
+      • tvGardenName: Tên vườn (fetch từ Firebase users/$uid/gardenName)
+      • tvHeaderVersion: Version app ở dưới cùng
+    Background: gradient eco-dark từ trên xuống
+-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="220dp"
     android:orientation="vertical"
-    android:background="@drawable/bg_sunset_gradient"
+    android:background="@drawable/bg_nav_header_gradient"
     android:padding="24dp"
     android:gravity="bottom">
 
+    <!-- Radial glow decoration -->
     <View
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:background="@drawable/bg_power_glow_light"
-        android:alpha="0.4"
+        android:background="@drawable/bg_splash_radial_glow"
+        android:alpha="0.08"
         android:layout_gravity="end"
         android:layout_marginTop="-80dp"
         android:layout_marginEnd="-40dp"/>
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/ivHeaderAvatar"
-        android:layout_width="72dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_person"
-        android:background="#E8E6FF"
-        app:shapeAppearanceOverlay="@style/CircleImageView"
-        app:strokeColor="#A29BFE"
-        app:strokeWidth="2.5dp"
-        android:padding="4dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="-120dp"/>
-
-    <TextView
-        android:id="@+id/tvHeaderName"
+    <!-- Avatar + Info row -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tên người dùng"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#2D3436"
-        android:fontFamily="@font/montserrat_bold"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
 
-    <TextView
-        android:id="@+id/tvHeaderEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="email@example.com"
-        android:textSize="12sp"
-        android:textColor="#636E72"
-        android:fontFamily="@font/montserrat_medium"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="0dp"
-        android:layout_paddingBottom="10dp"/>
+        <!--
+            ShapeableImageView: Avatar tròn.
+            Default: ic_person, có thể set ảnh thật bằng Glide.
+            Viền lime 2dp tạo hiệu ứng glow nhẹ.
+        -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivNavAvatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_person"
+            android:layout_marginEnd="14dp"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeColor="#CCFF00"
+            app:strokeWidth="2dp"/>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Tên người dùng -->
+            <TextView
+                android:id="@+id/tvHeaderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Người dùng"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#E8F5E9"
+                android:fontFamily="@font/montserrat_bold"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- Email -->
+            <TextView
+                android:id="@+id/tvHeaderEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="email@example.com"
+                android:textSize="12sp"
+                android:textColor="#4A8C52"
+                android:fontFamily="@font/montserrat_medium"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+        <!-- Online badge nhỏ -->
+        <View
+            android:id="@+id/viewNavOnlineDot"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/circle_gray"/>
+
+    </LinearLayout>
+
+    <!-- Divider mỏng -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#4DFFFFFF"
+        android:background="#1E3B22"
         android:layout_marginBottom="10dp"/>
 
+    <!-- Tên vườn (Garden Name) + icon -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,7 +115,7 @@
             android:layout_height="14dp"
             android:src="@drawable/ic_plant_placeholder"
             android:layout_marginEnd="6dp"
-            app:tint="#A29BFE"/>
+            app:tint="#CCFF00"/>
 
         <TextView
             android:id="@+id/tvGardenName"
@@ -79,19 +124,20 @@
             android:layout_height="wrap_content"
             android:text="Vườn của tôi"
             android:textSize="12sp"
-            android:textColor="#A29BFE"
-            android:textStyle="bold"
-            android:fontFamily="@font/montserrat_bold"
-            android:letterSpacing="0.02"/>
+            android:textColor="#CCFF00"
+            android:fontFamily="@font/montserrat_medium"
+            android:letterSpacing="0.05"/>
 
+        <!-- Version app -->
         <TextView
             android:id="@+id/tvHeaderVersion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="v1.0.0"
+            android:text="v1.0"
             android:textSize="10sp"
-            android:textColor="#B2BEC3"
+            android:textColor="#2D4A31"
             android:fontFamily="@font/montserrat_medium"/>
 
     </LinearLayout>
+
 </LinearLayout>
