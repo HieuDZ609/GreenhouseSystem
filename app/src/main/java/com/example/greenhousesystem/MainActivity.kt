@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private val db = FirebaseDatabase.getInstance().reference.child("GreenHouseSystem")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -322,7 +323,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNavStyle() {
         binding.bottomNavigation.apply {
-            setBackgroundColor(Color.parseColor("#0F1E12"))
+            setBackgroundColor(Color.TRANSPARENT)
             itemIconTintList = resources.getColorStateList(
                 R.color.bottom_nav_color_dark, null)
             itemTextColor = resources.getColorStateList(

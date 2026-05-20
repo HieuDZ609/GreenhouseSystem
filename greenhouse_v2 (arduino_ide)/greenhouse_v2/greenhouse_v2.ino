@@ -577,17 +577,26 @@ void Task_Sensors(void* pvParameters) {
             // In lý do lỗi — có thể là: token expired, network error, path sai...
             Serial.println("[Task_Sensors] ❌ Push thất bại: " + fbSensor.errorReason());
         }
-
-        static unsigned long lastHistoryPush = 0;
-        if (millis() - lastHistoryPush > 900000 || lastHistoryPush == 0) {
+ // Lưu trữ vào sensor history
+        if (historyCounter == 0) { 
+            Serial.println("[Task_Sensors] 📈 Đang tiến hành lưu 1 điểm lịch sử mới (Chu kỳ 15 phút)...");
+            
+            // Sử dụng pushJSON để Firebase tự sinh ra mã ID ngẫu nhiên không trùng lặp (Push ID)
             if (Firebase.RTDB.pushJSON(&fbSensor, "GreenHouseSystem/sensorHistory", &sensorJson)) {
-                Serial.println("[Task_Sensors] 📈 Đã lưu 1 điểm lịch sử mới.");
-                lastHistoryPush = millis();
+                Serial.println("[Task_Sensors] ✅ Đã lưu lịch sử thành công!");
+            } else {
+                Serial.println("[Task_Sensors] ❌ Lưu lịch sử thất bại: " + fbSensor.errorReason());
             }
-        }   
-        // ── Chờ 5 giây (non-blocking) ────────────────────────────
-        // vTaskDelay đặt task vào trạng thái Blocked → CPU chạy task khác
-        // Khác hoàn toàn với delay(5000) — delay() "giữ CPU" (spin-wait)
+        }
+
+        // Tăng bộ đếm vòng lặp
+        historyCounter++;
+        if (historyCounter >= 180) {
+            historyCounter = 0; // Đủ 15 phút thì reset bộ đếm về 0 để vòng lặp sau tự động push
+        }
+
+        // ── 5. ĐỢI CHU KỲ TIẾP THEO (5 Giây) ──────────────────────────────
+        // vTaskDelay giải phóng CPU cho các tác vụ khác chạy, không gây nghẽn core
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 

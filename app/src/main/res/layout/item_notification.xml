@@ -12,15 +12,16 @@
     android:focusable="true"
     app:cardBackgroundColor="#80FFFFFF"
     app:cardCornerRadius="24dp"
-    app:cardElevation="6dp"
-    app:cardMaxElevation="12dp"
+    app:cardElevation="0dp"
     app:strokeColor="#CCFFFFFF"
     app:strokeWidth="1.5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#80FFFFFF">
 
         <ImageView
             android:id="@+id/ivTypeIcon"

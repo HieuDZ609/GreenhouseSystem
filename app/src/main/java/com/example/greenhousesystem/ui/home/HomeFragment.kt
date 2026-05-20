@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        applyGlassBlur() // Bật hiệu ứng mờ kính cho các Card
+       // applyGlassBlur() // Bật hiệu ứng mờ kính cho các Card
         setupEntrance()
         setupSwipeRefresh()
         setupLedSwitch()

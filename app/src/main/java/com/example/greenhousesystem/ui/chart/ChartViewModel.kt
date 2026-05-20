@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.*
-
+import kotlinx.coroutines.withTimeout
 /**
  * ChartViewModel — Quản lý dữ liệu lịch sử cảm biến cho màn hình Chart.
  *
@@ -51,6 +51,12 @@ class ChartViewModel : ViewModel() {
     private val _humidThreshold = MutableStateFlow(Pair(40.0, 90.0))
     val humidThreshold: StateFlow<Pair<Double, Double>> = _humidThreshold.asStateFlow()
 
+    private val _isEmptyState = MutableStateFlow(false)
+    val isEmptyState: StateFlow<Boolean> = _isEmptyState.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
     init {
         fetchData(ChartFilter.TODAY)
     }
@@ -76,6 +82,7 @@ class ChartViewModel : ViewModel() {
     // ─────────────────────────────────────────────────────────────────
     fun fetchData(filter: ChartFilter = _currentFilter.value) {
         _isLoading.value = true
+
         viewModelScope.launch {
             try {
                 val now = System.currentTimeMillis()
@@ -100,13 +107,17 @@ class ChartViewModel : ViewModel() {
 
                 if (rawList.isEmpty()) {
                     _isMockData.value = true
+                    _isEmptyState.value = true
                     processAndEmit(generateMockData(filter), filter)
                 } else {
                     _isMockData.value = false
+                    _isEmptyState.value = false
                     processAndEmit(rawList, filter)
                 }
             } catch (e: Exception) {
                 _isMockData.value = true
+                _isEmptyState.value = false
+                _errorMessage.value = "Lỗi kết nối Firebase: ${e.message}"
                 processAndEmit(generateMockData(filter), filter)
             } finally {
                 _isLoading.value = false
@@ -123,46 +134,85 @@ class ChartViewModel : ViewModel() {
     //          trả về Double và hoàn toàn hợp lệ với List<Double>.
     // ─────────────────────────────────────────────────────────────────
     private fun processAndEmit(data: List<HistoryRecord>, filter: ChartFilter) {
+        val sortedData = data.sortedBy { it.timestamp }
         val cal = Calendar.getInstance()
 
-        // Key group: giờ cho TODAY, ngày/tháng cho WEEK & MONTH
-        val groupKey: (Long) -> String = { timestamp ->
-            cal.timeInMillis = timestamp
-            when (filter) {
-                ChartFilter.TODAY ->
+        val filteredRecords = mutableListOf<HistoryRecord>()
+        val chartEntriesTemp = mutableListOf<ChartEntry>()
+        val chartEntriesHumid = mutableListOf<ChartEntry>()
+
+        when (filter) {
+            ChartFilter.TODAY -> {
+                // Chế độ 1 ngày: Gom nhóm theo từng Giờ (00:00, 01:00, ...) như cũ
+                val groupKey: (Long) -> String = { timestamp ->
+                    cal.timeInMillis = timestamp
                     String.format("%02d:00", cal.get(Calendar.HOUR_OF_DAY))
-                ChartFilter.WEEK, ChartFilter.MONTH ->
-                    String.format(
-                        "%02d/%02d",
-                        cal.get(Calendar.DAY_OF_MONTH),
-                        cal.get(Calendar.MONTH) + 1
-                    )
+                }
+                val grouped = sortedData.groupBy { groupKey(it.timestamp) }
+
+                grouped.forEach { (label, items) ->
+                    chartEntriesTemp.add(ChartEntry(label, items.map { it.temperature }.average().toFloat()))
+                    chartEntriesHumid.add(ChartEntry(label, items.map { it.humidity }.average().toFloat()))
+                }
+                // Thống kê Stats tính trên toàn bộ dữ liệu thô trong ngày
+                filteredRecords.addAll(sortedData)
+            }
+
+            ChartFilter.WEEK -> {
+                // Chế độ 7 ngày: Lấy mẫu nốt cách nhau ít nhất 2 giờ (2 * 60 * 60 * 1000 ms)
+                val interval = 2 * 60 * 60 * 1000L
+                var lastTimestamp = 0L
+
+                sortedData.forEach { record ->
+                    if ((record.timestamp - lastTimestamp) >= interval) {
+                        cal.timeInMillis = record.timestamp
+                        // Định dạng nhãn hiển thị: "Giờ:00 Ngày/Tháng" (Ví dụ: 14h 20/05)
+                        val label = String.format("%02dh %02d/%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1)
+
+                        chartEntriesTemp.add(ChartEntry(label, record.temperature.toFloat()))
+                        chartEntriesHumid.add(ChartEntry(label, record.humidity.toFloat()))
+
+                        filteredRecords.add(record)
+                        lastTimestamp = record.timestamp
+                    }
+                }
+            }
+
+            ChartFilter.MONTH -> {
+                // Chế độ 30 ngày: Lấy mẫu nốt cách nhau ít nhất 12 giờ (12 * 60 * 60 * 1000 ms)
+                val interval = 12 * 60 * 60 * 1000L
+                var lastTimestamp = 0L
+
+                sortedData.forEach { record ->
+                    if ((record.timestamp - lastTimestamp) >= interval) {
+                        cal.timeInMillis = record.timestamp
+                        // Định dạng nhãn hiển thị: "Buổi Ngày/Tháng" (Ví dụ: Sáng 20/05 hoặc Chiều 20/05)
+                        val session = if (cal.get(Calendar.HOUR_OF_DAY) < 12) "Sáng" else "Chiều"
+                        val label = String.format("%s %02d/%02d", session, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH) + 1)
+
+                        chartEntriesTemp.add(ChartEntry(label, record.temperature.toFloat()))
+                        chartEntriesHumid.add(ChartEntry(label, record.humidity.toFloat()))
+
+                        filteredRecords.add(record)
+                        lastTimestamp = record.timestamp
+                    }
+                }
             }
         }
 
-        // Sắp xếp theo thời gian → group → tính trung bình mỗi nhóm
-        val grouped = data.sortedBy { it.timestamp }.groupBy { groupKey(it.timestamp) }
+        // Cập nhật dữ liệu LiveData/StateFlow đẩy ra UI vẽ Chart
+        _chartDataTemp.value = chartEntriesTemp
+        _chartDataHumid.value = chartEntriesHumid
 
-        _chartDataTemp.value = grouped.map { (label, items) ->
-            // .average() của Kotlin trả về Double, cast sang Float cho MPAndroidChart
-            ChartEntry(label = label, value = items.map { it.temperature }.average().toFloat())
-        }
-        _chartDataHumid.value = grouped.map { (label, items) ->
-            ChartEntry(label = label, value = items.map { it.humidity }.average().toFloat())
-        }
-
-        // ── Tính stats min / avg / max ────────────────────────────
-        // ✅ FIX: Dùng .minOrNull() / .maxOrNull() / .average()
-        //         Kotlin stdlib — không cần Java Collections,
-        //         không có lỗi type inference với generics.
-        val temps  = data.map { it.temperature }
-        val humids = data.map { it.humidity }
+        // ── Tính thông số Max/Min/Avg dựa trên tập dữ liệu đã chọn lọc ────────────────────────────
+        val temps = filteredRecords.map { it.temperature }
+        val humids = filteredRecords.map { it.humidity }
 
         if (temps.isNotEmpty()) {
             _tempStats.value = SensorStats(
-                min = temps.minOrNull() ?: 0.0,   // ✅ thay Collections.min
-                avg = temps.average(),              // ✅ thay thủ công sum/size
-                max = temps.maxOrNull() ?: 0.0    // ✅ thay Collections.max
+                min = temps.minOrNull() ?: 0.0,
+                avg = temps.average(),
+                max = temps.maxOrNull() ?: 0.0
             )
         }
         if (humids.isNotEmpty()) {
