@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_account.xml — Màn hình thông tin tài khoản
-    ──────────────────────────────────────────────────────
-    Theme: Eco-Digital Dark Mode (#0F1E12 background)
-    Layout:
-      1. Header: Back button + title
-      2. Avatar card (ShapeableImageView tròn + viền lime)
-      3. Info card: tên, email, số điện thoại
-      4. Edit card: cập nhật tên, số điện thoại
-      5. Security card: đổi mật khẩu
-      6. Logout button: đỏ destructive
--->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F1E12"
+    android:background="@drawable/bg_sunset_gradient"
     android:overScrollMode="never">
 
     <LinearLayout
@@ -27,7 +15,6 @@
         android:paddingTop="16dp"
         android:paddingBottom="40dp">
 
-        <!-- ══ HEADER: Back + Title ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,42 +29,56 @@
                 android:layout_marginEnd="12dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="#1A2D1E"
+                app:cardBackgroundColor="#66FFFFFF"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#2D4A31"
+                app:cardElevation="2dp"
+                app:strokeColor="#CCFFFFFF"
                 app:strokeWidth="1dp">
+
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_back"
-                    app:tint="#CCFF00"/>
+                    app:tint="#636E72"/>
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout android:layout_width="0dp" android:layout_weight="1"
-                android:layout_height="wrap_content" android:orientation="vertical">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Hồ sơ cá nhân" android:textSize="11sp"
-                    android:textColor="#4A8C52" android:fontFamily="@font/montserrat_medium"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hồ sơ cá nhân"
+                    android:textSize="11sp"
+                    android:textColor="#A29BFE"
+                    android:fontFamily="@font/montserrat_medium"
                     android:letterSpacing="0.1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Tài khoản" android:textSize="22sp" android:textStyle="bold"
-                    android:textColor="#E8F5E9" android:fontFamily="@font/montserrat_bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tài khoản"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D3436"
+                    android:fontFamily="@font/montserrat_bold"/>
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- ══ AVATAR CARD ══ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#0F1E12"
+            app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="28dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#1E3B22"
-            app:strokeWidth="1dp">
+            app:cardElevation="4dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -86,21 +87,17 @@
                 android:gravity="center"
                 android:padding="28dp">
 
-                <!--
-                    ShapeableImageView: hình tròn hoàn hảo (circleAppearance).
-                    Viền lime 3dp để tạo hiệu ứng "glow" avatar.
-                    Kích thước 88dp — lớn đủ để nhận diện avatar.
-                -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/ivAvatar"
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:src="@drawable/ic_person"
+                    android:background="#E8E6FF"
                     app:shapeAppearanceOverlay="@style/CircleImageView"
-                    app:strokeColor="#CCFF00"
-                    app:strokeWidth="3dp"/>
+                    app:strokeColor="#A29BFE"
+                    app:strokeWidth="3dp"
+                    android:padding="4dp"/>
 
-                <!-- Tên hiển thị -->
                 <TextView
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
@@ -109,10 +106,9 @@
                     android:text="Người dùng"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#E8F5E9"
+                    android:textColor="#2D3436"
                     android:fontFamily="@font/montserrat_bold"/>
 
-                <!-- Email -->
                 <TextView
                     android:id="@+id/tvEmail"
                     android:layout_width="wrap_content"
@@ -120,10 +116,9 @@
                     android:layout_marginTop="4dp"
                     android:text="email@example.com"
                     android:textSize="13sp"
-                    android:textColor="#4A8C52"
+                    android:textColor="#636E72"
                     android:fontFamily="@font/montserrat_medium"/>
 
-                <!-- Số điện thoại -->
                 <TextView
                     android:id="@+id/tvPhone"
                     android:layout_width="wrap_content"
@@ -131,10 +126,9 @@
                     android:layout_marginTop="4dp"
                     android:text="Chưa cập nhật"
                     android:textSize="12sp"
-                    android:textColor="#2D4A31"
+                    android:textColor="#B2BEC3"
                     android:fontFamily="@font/montserrat_medium"/>
 
-                <!-- Badge "Tài khoản đã xác thực" -->
                 <TextView
                     android:id="@+id/tvVerifiedBadge"
                     android:layout_width="wrap_content"
@@ -142,27 +136,26 @@
                     android:layout_marginTop="10dp"
                     android:text="✓ Đã xác thực"
                     android:textSize="11sp"
-                    android:textColor="#0F1E12"
+                    android:textColor="#A29BFE"
                     android:textStyle="bold"
                     android:fontFamily="@font/montserrat_bold"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="4dp"
-                    android:background="@drawable/bg_liquid_button"
+                    android:background="@drawable/bg_filter_active_light"
                     android:visibility="gone"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ══ CARD CẬP NHẬT THÔNG TIN ══ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#0F1E12"
+            app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#1E3B22"
-            app:strokeWidth="1dp">
+            app:cardElevation="4dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -170,76 +163,103 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Cập nhật thông tin"
-                    android:textSize="13sp" android:textColor="#4A8C52"
-                    android:fontFamily="@font/montserrat_medium"
-                    android:letterSpacing="0.08" android:layout_marginBottom="16dp"/>
+                    android:textSize="13sp"
+                    android:textColor="#A29BFE"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="16dp"/>
 
-                <!-- Họ và tên -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilDisplayName"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" android:hint="Họ và tên"
-                    app:startIconDrawable="@drawable/ic_person" app:startIconTint="#CCFF00"
-                    app:boxStrokeColor="#2D4A31" app:boxBackgroundColor="#0A1A0A"
-                    app:hintTextColor="#4A8C52"
-                    app:boxCornerRadiusTopStart="16dp" app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp" app:boxCornerRadiusBottomEnd="16dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Họ và tên"
+                    app:startIconDrawable="@drawable/ic_person"
+                    app:startIconTint="#A29BFE"
+                    app:boxStrokeColor="#A29BFE"
+                    app:boxBackgroundColor="#66FFFFFF"
+                    app:hintTextColor="#A29BFE"
+                    android:textColorHint="#B2BEC3"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDisplayName"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:textColor="#E8F5E9" android:inputType="textPersonName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#2D3436"
+                        android:inputType="textPersonName"
                         android:fontFamily="@font/montserrat_medium"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUpdateName"
-                    android:layout_width="match_parent" android:layout_height="52dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
                     android:text="Cập nhật tên"
-                    android:textColor="#0F1E12" android:fontFamily="@font/montserrat_bold"
-                    app:backgroundTint="#CCFF00" app:cornerRadius="16dp"
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/montserrat_bold"
+                    app:backgroundTint="#A29BFE"
+                    app:cornerRadius="16dp"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- Số điện thoại -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPhone"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp" android:hint="Số điện thoại"
-                    app:startIconDrawable="@drawable/ic_phone" app:startIconTint="#CCFF00"
-                    app:boxStrokeColor="#2D4A31" app:boxBackgroundColor="#0A1A0A"
-                    app:hintTextColor="#4A8C52"
-                    app:boxCornerRadiusTopStart="16dp" app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp" app:boxCornerRadiusBottomEnd="16dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Số điện thoại"
+                    app:startIconDrawable="@drawable/ic_phone"
+                    app:startIconTint="#A29BFE"
+                    app:boxStrokeColor="#A29BFE"
+                    app:boxBackgroundColor="#66FFFFFF"
+                    app:hintTextColor="#A29BFE"
+                    android:textColorHint="#B2BEC3"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPhone"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:textColor="#E8F5E9" android:inputType="phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#2D3436"
+                        android:inputType="phone"
                         android:fontFamily="@font/montserrat_medium"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUpdatePhone"
-                    android:layout_width="match_parent" android:layout_height="52dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
                     android:text="Cập nhật số điện thoại"
-                    android:textColor="#0F1E12" android:fontFamily="@font/montserrat_bold"
-                    app:backgroundTint="#CCFF00" app:cornerRadius="16dp"/>
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/montserrat_bold"
+                    app:backgroundTint="#A29BFE"
+                    app:cornerRadius="16dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ══ CARD ĐỔI MẬT KHẨU ══ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#1A0A0A"
+            app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#3D1A1A"
-            app:strokeWidth="1dp">
+            app:cardElevation="4dp"
+            app:strokeColor="#CCFFFFFF"
+            app:strokeWidth="1.5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -247,90 +267,130 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Bảo mật" android:textSize="13sp" android:textColor="#8C4A4A"
-                    android:fontFamily="@font/montserrat_medium"
-                    android:letterSpacing="0.08" android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bảo mật"
+                    android:textSize="13sp"
+                    android:textColor="#FF7675"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="16dp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilCurrentPassword"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp" android:hint="Mật khẩu hiện tại"
-                    app:startIconDrawable="@drawable/ic_lock" app:startIconTint="#EF5350"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Mật khẩu hiện tại"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="#FF7675"
                     app:endIconMode="password_toggle"
-                    app:boxStrokeColor="#3D1A1A" app:boxBackgroundColor="#100808"
-                    app:hintTextColor="#8C4A4A"
-                    app:boxCornerRadiusTopStart="16dp" app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp" app:boxCornerRadiusBottomEnd="16dp">
+                    app:endIconTint="#636E72"
+                    app:boxStrokeColor="#FF7675"
+                    app:boxBackgroundColor="#66FFFFFF"
+                    app:hintTextColor="#FF7675"
+                    android:textColorHint="#B2BEC3"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etCurrentPassword"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:textColor="#E8F5E9" android:inputType="textPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#2D3436"
+                        android:inputType="textPassword"
                         android:fontFamily="@font/montserrat_medium"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilNewPassword"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp" android:hint="Mật khẩu mới"
-                    app:startIconDrawable="@drawable/ic_lock" app:startIconTint="#EF5350"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="Mật khẩu mới"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="#A29BFE"
                     app:endIconMode="password_toggle"
-                    app:boxStrokeColor="#3D1A1A" app:boxBackgroundColor="#100808"
-                    app:hintTextColor="#8C4A4A"
-                    app:boxCornerRadiusTopStart="16dp" app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp" app:boxCornerRadiusBottomEnd="16dp">
+                    app:endIconTint="#636E72"
+                    app:boxStrokeColor="#A29BFE"
+                    app:boxBackgroundColor="#66FFFFFF"
+                    app:hintTextColor="#A29BFE"
+                    android:textColorHint="#B2BEC3"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etNewPassword"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:textColor="#E8F5E9" android:inputType="textPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#2D3436"
+                        android:inputType="textPassword"
                         android:fontFamily="@font/montserrat_medium"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilConfirmNewPassword"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp" android:hint="Xác nhận mật khẩu mới"
-                    app:startIconDrawable="@drawable/ic_lock" app:startIconTint="#EF5350"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Xác nhận mật khẩu mới"
+                    app:startIconDrawable="@drawable/ic_lock"
+                    app:startIconTint="#A29BFE"
                     app:endIconMode="password_toggle"
-                    app:boxStrokeColor="#3D1A1A" app:boxBackgroundColor="#100808"
-                    app:hintTextColor="#8C4A4A"
-                    app:boxCornerRadiusTopStart="16dp" app:boxCornerRadiusTopEnd="16dp"
-                    app:boxCornerRadiusBottomStart="16dp" app:boxCornerRadiusBottomEnd="16dp">
+                    app:endIconTint="#636E72"
+                    app:boxStrokeColor="#A29BFE"
+                    app:boxBackgroundColor="#66FFFFFF"
+                    app:hintTextColor="#A29BFE"
+                    android:textColorHint="#B2BEC3"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etConfirmNewPassword"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:textColor="#E8F5E9" android:inputType="textPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#2D3436"
+                        android:inputType="textPassword"
                         android:fontFamily="@font/montserrat_medium"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnChangePassword"
-                    android:layout_width="match_parent" android:layout_height="52dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
                     android:text="Đổi mật khẩu"
-                    android:textColor="#FFCDD2" android:fontFamily="@font/montserrat_bold"
-                    app:backgroundTint="#8B1A1A" app:cornerRadius="16dp"/>
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/montserrat_bold"
+                    app:backgroundTint="#FF7675"
+                    app:cornerRadius="16dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ══ LOGOUT BUTTON ══ -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogout"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Đăng xuất"
-            android:textColor="#EF5350"
+            android:textColor="#FF7675"
             android:fontFamily="@font/montserrat_bold"
             android:textSize="15sp"
             style="@style/Widget.Material3.Button.OutlinedButton"
-            app:strokeColor="#3D1A1A"
-            app:strokeWidth="1dp"
+            app:strokeColor="#FF7675"
+            app:strokeWidth="1.5dp"
             app:cornerRadius="20dp"
             app:icon="@drawable/ic_logout"
-            app:iconTint="#EF5350"
+            app:iconTint="#FF7675"
             app:iconGravity="textStart"/>
 
     </LinearLayout>

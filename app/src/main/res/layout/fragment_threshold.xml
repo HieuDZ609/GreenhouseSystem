@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    fragment_threshold.xml — Màn hình cài đặt ngưỡng cảnh báo
-    ────────────────────────────────────────────────────────────
-    Điểm nổi bật:
-    • RangeSlider (Material 3) cho phép kéo 2 đầu min/max cùng lúc
-    • "Live Range Preview Bar": thanh trực quan hiển thị vùng an toàn
-    • Liquid Save Button: gradient lime với ripple effect
-    • Validation visual: chữ đỏ khi min >= max
--->
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F1E12"
+    android:background="@drawable/bg_sunset_gradient"
     android:overScrollMode="never">
 
     <LinearLayout
@@ -24,7 +15,6 @@
         android:paddingTop="16dp"
         android:paddingBottom="40dp">
 
-        <!-- ══ HEADER ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,105 +26,95 @@
                 android:id="@+id/btnBack"
                 android:layout_width="40dp" android:layout_height="40dp"
                 android:layout_marginEnd="12dp" android:clickable="true" android:focusable="true"
-                app:cardBackgroundColor="#1A2D1E" app:cardCornerRadius="12dp"
-                app:cardElevation="0dp" app:strokeColor="#2D4A31" app:strokeWidth="1dp">
+                app:cardBackgroundColor="#66FFFFFF" app:cardCornerRadius="12dp"
+                app:cardElevation="2dp" app:strokeColor="#CCFFFFFF" app:strokeWidth="1dp">
                 <ImageView android:layout_width="20dp" android:layout_height="20dp"
                     android:layout_gravity="center" android:src="@drawable/ic_back"
-                    app:tint="#CCFF00"/>
+                    app:tint="#636E72"/>
             </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                 android:layout_height="wrap_content" android:orientation="vertical">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Cấu hình" android:textSize="11sp" android:textColor="#4A8C52"
+                    android:text="Cấu hình" android:textSize="11sp" android:textColor="#A29BFE"
                     android:fontFamily="@font/montserrat_medium" android:letterSpacing="0.1"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Ngưỡng cảnh báo" android:textSize="22sp" android:textStyle="bold"
-                    android:textColor="#E8F5E9" android:fontFamily="@font/montserrat_bold"/>
+                    android:textColor="#2D3436" android:fontFamily="@font/montserrat_bold"/>
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- ══ CÂY ĐANG CHỌN ══ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" app:cardBackgroundColor="#0A1A0A"
-            app:cardCornerRadius="20dp" app:cardElevation="0dp"
-            app:strokeColor="#1E3B22" app:strokeWidth="1dp">
+            android:layout_marginBottom="16dp" app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="20dp" app:cardElevation="2dp"
+            app:strokeColor="#CCFFFFFF" app:strokeWidth="1.5dp">
+
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
                 <ImageView android:layout_width="20dp" android:layout_height="20dp"
                     android:src="@drawable/ic_plant_placeholder" android:layout_marginEnd="10dp"
-                    app:tint="#CCFF00"/>
+                    app:tint="#A29BFE"/>
                 <TextView android:layout_width="0dp" android:layout_weight="1"
                     android:layout_height="wrap_content" android:text="Cây đang trồng:"
-                    android:textSize="13sp" android:textColor="#4A8C52"
+                    android:textSize="13sp" android:textColor="#636E72"
                     android:fontFamily="@font/montserrat_medium"/>
                 <TextView android:id="@+id/tvCurrentPlant"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="--" android:textSize="14sp" android:textStyle="bold"
-                    android:textColor="#CCFF00" android:fontFamily="@font/montserrat_bold"/>
+                    android:textColor="#A29BFE" android:fontFamily="@font/montserrat_bold"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ══ CARD NHIỆT ĐỘ ══ -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" app:cardBackgroundColor="#0F1E12"
-            app:cardCornerRadius="24dp" app:cardElevation="0dp"
-            app:strokeColor="#1E3B22" app:strokeWidth="1dp">
+            android:layout_marginBottom="16dp" app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="24dp" app:cardElevation="4dp"
+            app:strokeColor="#CCFFFFFF" app:strokeWidth="1.5dp">
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="24dp">
 
-                <!-- Tiêu đề + warning text -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center_vertical"
                     android:layout_marginBottom="20dp">
                     <TextView android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:text="🌡️ Ngưỡng nhiệt độ"
                         android:textSize="15sp" android:textStyle="bold"
-                        android:textColor="#C8E6C9" android:fontFamily="@font/montserrat_bold"/>
-                    <!-- Cảnh báo min >= max: hiện khi validate fail -->
+                        android:textColor="#2D3436" android:fontFamily="@font/montserrat_bold"/>
                     <TextView android:id="@+id/tvTempWarning"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="⚠️ Min ≥ Max" android:textSize="11sp"
-                        android:textColor="#EF5350" android:fontFamily="@font/montserrat_bold"
+                        android:textColor="#FF7675" android:fontFamily="@font/montserrat_bold"
                         android:visibility="gone"/>
                 </LinearLayout>
 
-                <!-- Labels min/max (update real-time khi kéo slider) -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:layout_marginBottom="8dp">
                     <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="Tối thiểu" android:textSize="10sp"
-                            android:textColor="#3A6A3E" android:fontFamily="@font/montserrat_medium"/>
+                            android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"/>
                         <TextView android:id="@+id/tvTempMinValue"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="15°C" android:textSize="24sp" android:textStyle="bold"
-                            android:textColor="#64B5F6" android:fontFamily="@font/montserrat_bold"/>
+                            android:textColor="#FAB1A0" android:fontFamily="@font/montserrat_bold"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:orientation="vertical"
                         android:gravity="end">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="Tối đa" android:textSize="10sp"
-                            android:textColor="#3A6A3E" android:fontFamily="@font/montserrat_medium"/>
+                            android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"/>
                         <TextView android:id="@+id/tvTempMaxValue"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="35°C" android:textSize="24sp" android:textStyle="bold"
-                            android:textColor="#EF5350" android:fontFamily="@font/montserrat_bold"/>
+                            android:textColor="#FF7675" android:fontFamily="@font/montserrat_bold"/>
                     </LinearLayout>
                 </LinearLayout>
 
-                <!--
-                    RangeSlider — Material 3, cho kéo cả 2 đầu.
-                    values: [minValue, maxValue] set programmatically.
-                    valueFrom=0, valueTo=50 (°C range).
-                    Dùng trong ThresholdFragment: binding.sliderTempRange.values
-                -->
                 <com.google.android.material.slider.RangeSlider
                     android:id="@+id/sliderTempRange"
                     android:layout_width="match_parent"
@@ -143,52 +123,45 @@
                     android:valueFrom="0"
                     android:valueTo="50"
                     android:stepSize="1"
-                    app:thumbColor="#CCFF00"
-                    app:trackColorActive="#CCFF00"
-                    app:trackColorInactive="#1A3B22"
+                    app:thumbColor="#FF7675"
+                    app:trackColorActive="#FAB1A0"
+                    app:trackColorInactive="#33FAB1A0"
                     app:thumbRadius="12dp"
                     app:trackHeight="5dp"
-                    app:haloColor="#33CCFF00"/>
+                    app:haloColor="#33FF7675"/>
 
-                <!-- Live Range Preview Bar -->
-                <!--
-                    Track nền tối (toàn bộ dải 0-50°C).
-                    Bar xanh bên trong thể hiện vùng an toàn (min→max).
-                    Width và marginStart set dynamically trong Fragment.
-                -->
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Vùng an toàn:" android:textSize="10sp"
-                    android:textColor="#2D4A31" android:fontFamily="@font/montserrat_medium"
+                    android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"
                     android:layout_marginBottom="6dp"/>
 
                 <FrameLayout android:id="@+id/viewTempRangeTrack"
-                    android:layout_width="match_parent" android:layout_height="10dp"
-                    android:background="@drawable/bg_range_track_dark" android:layout_marginBottom="4dp">
+                    android:layout_width="match_parent" android:layout_height="12dp"
+                    android:background="@drawable/bg_glass_tube_track" android:layout_marginBottom="4dp">
                     <View android:id="@+id/viewTempRangeBar"
-                        android:layout_width="0dp" android:layout_height="10dp"
-                        android:background="@drawable/bg_range_safe_green"/>
+                        android:layout_width="0dp" android:layout_height="match_parent"
+                        android:background="@drawable/bg_liquid_pink"/>
                 </FrameLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:text="0°C"
-                        android:textSize="9sp" android:textColor="#1A3B22"
+                        android:textSize="9sp" android:textColor="#B2BEC3"
                         android:fontFamily="@font/montserrat_medium"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="50°C" android:textSize="9sp" android:textColor="#1A3B22"
+                        android:text="50°C" android:textSize="9sp" android:textColor="#B2BEC3"
                         android:fontFamily="@font/montserrat_medium"/>
                 </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ══ CARD ĐỘ ẨM ══ (tương tự cấu trúc card nhiệt độ) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp" app:cardBackgroundColor="#0D1A2A"
-            app:cardCornerRadius="24dp" app:cardElevation="0dp"
-            app:strokeColor="#1A3550" app:strokeWidth="1dp">
+            android:layout_marginBottom="24dp" app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="24dp" app:cardElevation="4dp"
+            app:strokeColor="#CCFFFFFF" app:strokeWidth="1.5dp">
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:orientation="vertical" android:padding="24dp">
@@ -199,11 +172,11 @@
                     <TextView android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:text="💧 Ngưỡng độ ẩm"
                         android:textSize="15sp" android:textStyle="bold"
-                        android:textColor="#BBDEFB" android:fontFamily="@font/montserrat_bold"/>
+                        android:textColor="#2D3436" android:fontFamily="@font/montserrat_bold"/>
                     <TextView android:id="@+id/tvHumidWarning"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
                         android:text="⚠️ Min ≥ Max" android:textSize="11sp"
-                        android:textColor="#EF5350" android:fontFamily="@font/montserrat_bold"
+                        android:textColor="#FF7675" android:fontFamily="@font/montserrat_bold"
                         android:visibility="gone"/>
                 </LinearLayout>
 
@@ -213,22 +186,22 @@
                         android:layout_height="wrap_content" android:orientation="vertical">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="Tối thiểu" android:textSize="10sp"
-                            android:textColor="#1A4A70" android:fontFamily="@font/montserrat_medium"/>
+                            android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"/>
                         <TextView android:id="@+id/tvHumidMinValue"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="40%" android:textSize="24sp" android:textStyle="bold"
-                            android:textColor="#64B5F6" android:fontFamily="@font/montserrat_bold"/>
+                            android:textColor="#A29BFE" android:fontFamily="@font/montserrat_bold"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:orientation="vertical"
                         android:gravity="end">
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="Tối đa" android:textSize="10sp"
-                            android:textColor="#1A4A70" android:fontFamily="@font/montserrat_medium"/>
+                            android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"/>
                         <TextView android:id="@+id/tvHumidMaxValue"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:text="90%" android:textSize="24sp" android:textStyle="bold"
-                            android:textColor="#42A5F5" android:fontFamily="@font/montserrat_bold"/>
+                            android:textColor="#74B9FF" android:fontFamily="@font/montserrat_bold"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -237,68 +210,59 @@
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:valueFrom="0" android:valueTo="100" android:stepSize="1"
-                    app:thumbColor="#42A5F5" app:trackColorActive="#42A5F5"
-                    app:trackColorInactive="#0A1A30" app:thumbRadius="12dp"
-                    app:trackHeight="5dp" app:haloColor="#3342A5F5"/>
+                    app:thumbColor="#74B9FF" app:trackColorActive="#A29BFE"
+                    app:trackColorInactive="#33A29BFE" app:thumbRadius="12dp"
+                    app:trackHeight="5dp" app:haloColor="#3374B9FF"/>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:text="Vùng an toàn:" android:textSize="10sp"
-                    android:textColor="#1A3550" android:fontFamily="@font/montserrat_medium"
+                    android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"
                     android:layout_marginBottom="6dp"/>
 
                 <FrameLayout android:id="@+id/viewHumidRangeTrack"
-                    android:layout_width="match_parent" android:layout_height="10dp"
-                    android:background="@drawable/bg_range_track_dark_blue" android:layout_marginBottom="4dp">
+                    android:layout_width="match_parent" android:layout_height="12dp"
+                    android:background="@drawable/bg_glass_tube_track" android:layout_marginBottom="4dp">
                     <View android:id="@+id/viewHumidRangeBar"
-                        android:layout_width="0dp" android:layout_height="10dp"
-                        android:background="@drawable/bg_range_safe_blue"/>
+                        android:layout_width="0dp" android:layout_height="match_parent"
+                        android:background="@drawable/bg_liquid_blue"/>
                 </FrameLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView android:layout_width="0dp" android:layout_weight="1"
                         android:layout_height="wrap_content" android:text="0%"
-                        android:textSize="9sp" android:textColor="#1A3550"
+                        android:textSize="9sp" android:textColor="#B2BEC3"
                         android:fontFamily="@font/montserrat_medium"/>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="100%" android:textSize="9sp" android:textColor="#1A3550"
+                        android:text="100%" android:textSize="9sp" android:textColor="#B2BEC3"
                         android:fontFamily="@font/montserrat_medium"/>
                 </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ══ BUTTONS: Reset + Save (Liquid Style) ══ -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Reset — outlined -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReset"
                 android:layout_width="0dp" android:layout_height="60dp"
                 android:layout_weight="1" android:layout_marginEnd="10dp"
-                android:text="Đặt lại" android:textColor="#CCFF00"
+                android:text="Đặt lại" android:textColor="#A29BFE"
                 android:fontFamily="@font/montserrat_bold"
                 style="@style/Widget.Material3.Button.OutlinedButton"
-                app:strokeColor="#2D4A31" app:strokeWidth="1dp" app:cornerRadius="20dp"/>
+                app:strokeColor="#A29BFE" app:strokeWidth="1.5dp" app:cornerRadius="20dp"/>
 
-            <!--
-                Save — LIQUID STYLE BUTTON
-                Background: gradient lime CCFF00 → 84CC16 → 65A30D (diagonal 135°)
-                Bo tròn hoàn toàn (cornerRadius = 28dp = half height)
-                Ripple: dark để nổi bật trên nền lime sáng
-                Khi nhấn thành công: scale bounce animation trong Fragment
-            -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 android:layout_width="0dp" android:layout_height="60dp"
                 android:layout_weight="2"
                 android:text="💾  Lưu ngưỡng"
-                android:textSize="15sp" android:textColor="#0A1A0A"
+                android:textSize="15sp" android:textColor="#FFFFFF"
                 android:fontFamily="@font/montserrat_bold"
-                android:background="@drawable/bg_liquid_button"
-                app:cornerRadius="28dp"
-                app:rippleColor="#33000000"/>
+                android:background="@drawable/bg_liquid_button_sunset"
+                app:cornerRadius="30dp"
+                app:rippleColor="#4DFFFFFF"/>
 
         </LinearLayout>
 
