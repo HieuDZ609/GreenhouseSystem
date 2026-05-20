@@ -21,32 +21,12 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-/**
- * ControlFragment — Điều khiển LED RGB.
- *
- * ✅ FIX 1: Xóa hoàn toàn dòng:
- *   sharedViewModel.selectedDevice.observe(...)
- *   → selectedDevice không tồn tại trong SharedDeviceViewModel.
- *   SharedDeviceViewModel dùng StateFlow, không phải LiveData.
- *
- * ✅ FIX 2: Thay observe() bằng collectLatest() với repeatOnLifecycle
- *   để tương thích với StateFlow từ SharedDeviceViewModel.
- *
- * ✅ FIX 3: Dùng sharedViewModel.ledStatus (StateFlow) thay vì
- *   viewModel.config (LiveData từ ControlViewModel riêng),
- *   vì SharedDeviceViewModel là nguồn dữ liệu duy nhất (single source).
- *
- * ✅ FIX 4: Gọi sharedViewModel.applyLedMode() / applyManualColor() /
- *   toggleLed() thay vì viewModel.* để data flow nhất quán.
- */
+
 class ControlFragment : Fragment() {
 
     private var _binding: FragmentControlBinding? = null
     private val binding get() = _binding!!
 
-    // ✅ FIX: Chỉ dùng SharedDeviceViewModel (activityViewModels)
-    //         Không cần ControlViewModel riêng nữa vì tất cả logic
-    //         LED đã nằm trong SharedDeviceViewModel.
     private val sharedViewModel: SharedDeviceViewModel by activityViewModels()
 
     // Tránh vòng lặp khi set UI từ code (không phải từ user)
@@ -70,9 +50,6 @@ class ControlFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ✅ FIX: KHÔNG gọi sharedViewModel.selectedDevice ở đây
-        //         vì field đó không tồn tại.
-        //         SharedDeviceViewModel tự load data trong init{}.
 
         setupPowerButton()
         setupPresetCards()

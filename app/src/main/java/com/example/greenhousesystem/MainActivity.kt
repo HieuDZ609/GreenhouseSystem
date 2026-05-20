@@ -226,12 +226,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  AUTH STATE OBSERVER — Tự động redirect khi session hết hạn
-    //
-    //  repeatOnLifecycle(STARTED): pause khi Activity bị che (minimize),
-    //  resume khi quay lại → tránh navigate khi không visible.
-    // ─────────────────────────────────────────────────────────────────────
+
     private fun observeAuthState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -244,7 +239,7 @@ class MainActivity : AppCompatActivity() {
                         authListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
                             val currentUser = firebaseAuth.currentUser
 
-                            // Nếu user bị null (đăng xuất / session hết hạn)
+                            // Nếu user bị null (đăng xuất )
                             if (currentUser == null) {
                                 // Kiểm tra xem có đang ở màn hình Auth chưa
                                 sharedViewModel.stopListening()
@@ -267,7 +262,6 @@ class MainActivity : AppCompatActivity() {
                         }
                         auth.addAuthStateListener(authListener!!)
 
-                        // Coroutine bị cancel → remove listener (tránh leak)
                         cont.invokeOnCancellation {
                             authListener?.let { auth.removeAuthStateListener(it) }
                         }
@@ -332,30 +326,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * handleInitialDestination — Xử lý khi app khởi động lần đầu.
-     * Nếu intent cho biết chưa đăng nhập → navigate đến Login.
-     * (Intent được set bởi SplashActivity dựa trên auth.currentUser)
-     */
-//    private fun handleInitialDestination() {
-//        val isLoggedIn = intent.getBooleanExtra(EXTRA_IS_LOGGED_IN, false)
-//        if (!isLoggedIn) {
-//            // Post delay để NavController khởi tạo xong
-//            binding.root.post {
-//                navController.navigate(R.id.action_home_to_login)
-//            }
-//        }
-//    }
-
-    /** Hardware back button: đóng drawer trước nếu đang mở. */
-//    @Deprecated("Deprecated in Java")
-//    override fun onBackPressed() {
-//        if (binding.drawerLayout.isDrawerOpen(binding.navigationView)) {
-//            binding.drawerLayout.closeDrawers()
-//        } else {
-//            @Suppress("DEPRECATION")
-//            super.onBackPressed()
-//        }
-//    }
 
 }

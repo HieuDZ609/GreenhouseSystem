@@ -163,9 +163,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  CẬP NHẬT GIAO DIỆN SENSOR (GIỮ HIỆU ỨNG KÍNH)
-    // ─────────────────────────────────────────────────────────
+
     private fun updateSensorUi(temp: Double, humid: Double, timestamp: Long) {
         val plant = sharedViewModel.selectedPlant.value
 

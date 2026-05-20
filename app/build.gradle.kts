@@ -67,7 +67,7 @@ dependencies {
         // Load ảnh avatar, icon
         implementation("com.github.bumptech.glide:glide:4.16.0")
 
-        // Lottie — animation loading, success tick đẹp
+        // Lottie — animation loading,
         implementation("com.airbnb.android:lottie:6.6.6")
 
         // ── Lifecycle / ViewModel ─────────────────────────

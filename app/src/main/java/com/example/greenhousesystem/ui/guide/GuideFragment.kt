@@ -25,7 +25,6 @@ class GuideFragment : Fragment() {
             toggleSection(binding.content1, binding.arrow1)
         }
 
-        // Làm tương tự cho header2, header3...
     }
 
     private fun toggleSection(contentView: View, arrowView: View) {
