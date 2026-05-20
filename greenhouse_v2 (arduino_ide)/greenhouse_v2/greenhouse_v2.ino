@@ -340,7 +340,8 @@ void initWiFi() {
     // Cú pháp: wifiMulti.addAP("Ten_WiFi", "Mat_Khau");
     
     wifiMulti.addAP("Phong 1", "11111111");       // Mạng ở nhà
-    wifiMulti.addAP("An Lanh", "anlanh123");          // Mạng ở trường
+    wifiMulti.addAP("An Lanh", "anlanh123"); 
+     wifiMulti.addAP("VKU_Student", "Vku@2025");              // Mạng ở trường
     wifiMulti.addAP("iPhone_Hotspot", "phatwifi99");     // Mạng phát từ điện thoại
 
     Serial.print("[WiFi] Đang kết nối...");
