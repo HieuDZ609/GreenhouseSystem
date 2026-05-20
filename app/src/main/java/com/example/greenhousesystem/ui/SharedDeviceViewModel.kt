@@ -64,9 +64,9 @@ class SharedDeviceViewModel : ViewModel() {
     private var savedUid: String? = null
 
 
-    init {
-        startListening()
-    }
+//    init {
+//        startListening()
+//    }
 
     /**
      * startListening — Đăng ký tất cả Firebase realtime listeners.
@@ -79,7 +79,16 @@ class SharedDeviceViewModel : ViewModel() {
         listenLedStatus()
         listenSelectedPlant()
     }
-
+    fun stopListening() {
+        sensorListener?.let { db.child("sensors").removeEventListener(it) }
+        deviceListener?.let { db.child("devices").removeEventListener(it) }
+        ledListener?.let { db.child("devices").child("led").removeEventListener(it) }
+        savedUid?.let { u ->
+            plantListener?.let {
+                db.child("users").child(u).child("selectedPlant").removeEventListener(it)
+            }
+        }
+    }
     // ─────────────────────────────────────────────────────────────────────
     //  SENSOR LISTENER — Nhận nhiệt độ + độ ẩm realtime từ ESP32
     // ─────────────────────────────────────────────────────────────────────

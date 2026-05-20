@@ -237,8 +237,10 @@ class HomeFragment : Fragment() {
             .alpha(0f)
             .setDuration(150L)
             .withEndAction {
-                binding.viewLedColor.setBackgroundColor(ledColor)
-                binding.viewLedColor.animate().alpha(1f).setDuration(150L).start()
+                if (_binding != null) {
+                    binding.viewLedColor.setBackgroundColor(ledColor)
+                    binding.viewLedColor.animate().alpha(1f).setDuration(150L).start()
+                }
             }
             .start()
 
@@ -280,6 +282,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding?.viewLedColor?.clearAnimation()
         _binding = null
     }
 }
