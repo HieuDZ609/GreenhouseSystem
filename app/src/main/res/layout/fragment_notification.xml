@@ -57,16 +57,31 @@
 
                 <View android:layout_width="1dp" android:layout_height="48dp" android:background="#33A29BFE"/>
 
-                <LinearLayout android:layout_width="0dp" android:layout_weight="1"
-                    android:layout_height="wrap_content" android:orientation="vertical"
-                    android:gravity="center" android:id="@+id/btnMarkAllRead"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="28dp" android:layout_height="28dp"
-                        android:src="@drawable/ic_bell" app:tint="#A29BFE"/>
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp" android:text="Đọc hết"
-                        android:textSize="11sp" android:textColor="#A29BFE"
-                        android:fontFamily="@font/montserrat_medium" android:textStyle="bold"/>
+                <LinearLayout
+                    android:id="@+id/btnMarkAllRead"
+                    android:layout_width="0dp"
+                    android:layout_height="67dp"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_bell"
+                        app:tint="#A29BFE" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:text="Đọc hết"
+                        android:textColor="#A29BFE"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
             </LinearLayout>

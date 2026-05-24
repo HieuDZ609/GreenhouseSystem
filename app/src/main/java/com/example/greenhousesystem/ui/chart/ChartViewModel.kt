@@ -213,7 +213,7 @@ class ChartViewModel : ViewModel() {
         }
     }
 
-    
+
 
 }
 
