@@ -20,5 +20,8 @@
         android:id="@+id/notificationFragment"
         android:icon="@drawable/ic_bell"
         android:title="Thông báo" />
-
+    <item
+        android:id="@+id/guideFragment"
+        android:icon="@drawable/ic_book"
+        android:title="Hướng dẫn" />
 </menu>

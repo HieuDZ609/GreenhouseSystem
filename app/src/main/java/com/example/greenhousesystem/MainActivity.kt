@@ -3,8 +3,10 @@ package com.example.greenhousesystem
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -70,6 +72,7 @@ class MainActivity : AppCompatActivity() {
     private val db = FirebaseDatabase.getInstance().reference.child("GreenHouseSystem")
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -83,7 +86,22 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavStyle()
         observeAuthState()
         observeSharedViewModel()
-        handleInitialDestination()
+//        handleInitialDestination()
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Ưu tiên đóng Drawer nếu nó đang mở
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    // Nếu Drawer đã đóng, dùng bộ điều hành hệ thống để quay lại hoặc thoát
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        }
+        // QUAN TRỌNG: Phải có dòng này thì callback mới chạy
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -209,12 +227,7 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  AUTH STATE OBSERVER — Tự động redirect khi session hết hạn
-    //
-    //  repeatOnLifecycle(STARTED): pause khi Activity bị che (minimize),
-    //  resume khi quay lại → tránh navigate khi không visible.
-    // ─────────────────────────────────────────────────────────────────────
+
     private fun observeAuthState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -227,9 +240,10 @@ class MainActivity : AppCompatActivity() {
                         authListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
                             val currentUser = firebaseAuth.currentUser
 
-                            // Nếu user bị null (đăng xuất / session hết hạn)
+                            // Nếu user bị null (đăng xuất )
                             if (currentUser == null) {
                                 // Kiểm tra xem có đang ở màn hình Auth chưa
+                                sharedViewModel.stopListening()
                                 val currentDest = navController.currentDestination?.id
                                 val isAtAuthScreen = currentDest in setOf(
                                     R.id.loginFragment, R.id.registerFragment
@@ -244,11 +258,11 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 // User mới đăng nhập → refresh header info
                                 loadNavHeaderInfo()
+                                sharedViewModel.startListening()
                             }
                         }
                         auth.addAuthStateListener(authListener!!)
 
-                        // Coroutine bị cancel → remove listener (tránh leak)
                         cont.invokeOnCancellation {
                             authListener?.let { auth.removeAuthStateListener(it) }
                         }
@@ -303,7 +317,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNavStyle() {
         binding.bottomNavigation.apply {
-            setBackgroundColor(Color.parseColor("#0F1E12"))
+            setBackgroundColor(Color.TRANSPARENT)
             itemIconTintList = resources.getColorStateList(
                 R.color.bottom_nav_color_dark, null)
             itemTextColor = resources.getColorStateList(
@@ -313,29 +327,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * handleInitialDestination — Xử lý khi app khởi động lần đầu.
-     * Nếu intent cho biết chưa đăng nhập → navigate đến Login.
-     * (Intent được set bởi SplashActivity dựa trên auth.currentUser)
-     */
-    private fun handleInitialDestination() {
-        val isLoggedIn = intent.getBooleanExtra(EXTRA_IS_LOGGED_IN, false)
-        if (!isLoggedIn) {
-            // Post delay để NavController khởi tạo xong
-            binding.root.post {
-                navController.navigate(R.id.action_home_to_login)
-            }
-        }
-    }
 
-    /** Hardware back button: đóng drawer trước nếu đang mở. */
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(binding.navigationView)) {
-            binding.drawerLayout.closeDrawers()
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
-        }
-    }
 }

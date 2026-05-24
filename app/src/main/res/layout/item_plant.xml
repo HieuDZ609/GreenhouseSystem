@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    item_plant.xml — Grid item cho PlantPickerDialog (2 cột)
-    ──────────────────────────────────────────────────────────
-    State: Normal (dark card, 1dp gray stroke)
-           Selected (lime glow: CCFF00 stroke 3dp + bg sáng hơn)
-    Nội dung: Icon emoji + Tên cây + Ngưỡng nhiệt độ + LED mode gợi ý
--->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,11 +8,8 @@
     android:layout_margin="6dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="#0F1E12"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="0dp"
-    app:strokeColor="#1E3B22"
-    app:strokeWidth="1dp">
+    app:cardBackgroundColor="#33FFFFFF" app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"             app:strokeColor="#99FFFFFF"         app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,23 +18,17 @@
         android:gravity="center"
         android:padding="16dp">
 
-        <!--
-            FrameLayout để overlay check icon khi selected.
-            Icon plant emoji lớn (40sp) ở giữa.
-            Check icon (✓) xuất hiện ở góc phải trên khi selected.
-        -->
         <FrameLayout
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginBottom="10dp">
 
-            <!-- Vòng tròn nền icon -->
             <View
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:background="@drawable/bg_plant_icon_circle"/>
+                android:background="@drawable/bg_plant_icon_circle"
+                android:backgroundTint="#22FFFFFF"/>
 
-            <!-- Emoji icon chính của cây -->
             <TextView
                 android:id="@+id/tvPlantIcon"
                 android:layout_width="match_parent"
@@ -53,7 +37,6 @@
                 android:text="🌱"
                 android:textSize="30sp"/>
 
-            <!-- Check badge (góc phải trên, ẩn mặc định) -->
             <TextView
                 android:id="@+id/tvCheckBadge"
                 android:layout_width="20dp"
@@ -62,15 +45,13 @@
                 android:gravity="center"
                 android:text="✓"
                 android:textSize="11sp"
-                android:textColor="#0F1E12"
-                android:textStyle="bold"
+                android:textColor="#2D3436" android:textStyle="bold"
                 android:fontFamily="@font/montserrat_bold"
                 android:background="@drawable/bg_check_badge_lime"
                 android:visibility="gone"/>
 
         </FrameLayout>
 
-        <!-- Tên cây -->
         <TextView
             android:id="@+id/tvPlantName"
             android:layout_width="wrap_content"
@@ -78,35 +59,29 @@
             android:text="Cà chua"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="#E8F5E9"
-            android:fontFamily="@font/montserrat_bold"
+            android:textColor="#2D3436" android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
             android:layout_marginBottom="4dp"/>
 
-        <!-- Ngưỡng nhiệt độ -->
         <TextView
             android:id="@+id/tvPlantThreshold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="18 ~ 30°C"
             android:textSize="11sp"
-            android:textColor="#4A8C52"
-            android:fontFamily="@font/montserrat_medium"
+            android:textColor="#636E72" android:fontFamily="@font/montserrat_medium"
             android:layout_marginBottom="6dp"/>
 
-        <!-- Recommended LED mode -->
         <TextView
             android:id="@+id/tvRecommendedMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="💡 Phát triển"
             android:textSize="10sp"
-            android:textColor="#2D4A31"
-            android:fontFamily="@font/montserrat_medium"
+            android:textColor="#A29BFE" android:fontFamily="@font/montserrat_medium"
             android:paddingHorizontal="8dp"
             android:paddingVertical="3dp"
-            android:background="@drawable/bg_led_mode_tag"/>
-
-    </LinearLayout>
+            android:background="@drawable/bg_led_mode_tag"
+            android:backgroundTint="#22A29BFE"/> </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

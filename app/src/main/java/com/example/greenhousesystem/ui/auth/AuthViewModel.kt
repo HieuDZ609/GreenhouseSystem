@@ -134,6 +134,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             } catch (_: Exception) {}
         }
     }
+
 }
 
 // Sealed class trạng thái

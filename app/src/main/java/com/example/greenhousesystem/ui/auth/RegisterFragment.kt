@@ -58,13 +58,7 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    //  REAL-TIME VALIDATION
-    //  Lưu ý: Chỉ dùng các ID có trong fragment_register.xml hiện tại:
-    //  etFullName, etEmail, etPhone, etPassword, etConfirmPassword
-    //  tilFullName, tilEmail, tilPhone, tilPassword, tilConfirmPassword
-    //  progressPasswordStrength, tvPasswordStrength (đã thêm vào XML)
-    // ─────────────────────────────────────────────────────────────────────
+
     private fun setupRealTimeValidation() {
 
         // Họ tên — validate khi rời focus
