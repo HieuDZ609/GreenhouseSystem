@@ -83,8 +83,8 @@
 // ════════════════════════════════════════════════════════════════
 //  INCLUDES
 // ════════════════════════════════════════════════════════════════
-#include <Arduino.h>
 #include <WiFi.h>
+#include <Arduino.h>
 #include <WiFiMulti.h>        // Captive Portal — không hardcode WiFi
 #include <Firebase_ESP_Client.h>   // Firebase Realtime Database
 #include <DHT.h>                   // Cảm biến DHT22
@@ -123,11 +123,13 @@ volatile bool servoNewData = false;
 //   R → 330Ω → GPIO 15
 //   G → 220Ω → GPIO 16
 //   B → 220Ω → GPIO 17
-#define LED_RED_PIN    15
-#define LED_GREEN_PIN  16
-#define LED_BLUE_PIN   17
+    #define LED1_RED_PIN    15
+    #define LED1_GREEN_PIN  16
+    #define LED1_BLUE_PIN   17
 
-
+    #define LED2_RED_PIN    9
+    #define LED2_GREEN_PIN  10
+    #define LED2_BLUE_PIN   11
 // ════════════════════════════════════════════════════════════════
 //  📡 PWM CONFIGURATION (Arduino Core 3.x API)
 //
@@ -154,6 +156,10 @@ volatile bool servoNewData = false;
 // ════════════════════════════════════════════════════════════════
 FirebaseData   fbStream;     // Object riêng cho Stream LED (Core 1)
 FirebaseData   fbSensor;     // Object riêng cho push Sensor (Core 0)
+FirebaseData fbServoStream;    
+int historyCounter = 0;  
+int currentAngle = 0;
+
 FirebaseAuth   auth;
 FirebaseConfig firebaseConfig;
 
@@ -306,10 +312,13 @@ void loop() {
 // ════════════════════════════════════════════════════════════════
 void initPWM() {
     // ✅ Core 3.x: Chỉ cần 1 dòng cho mỗi chân
-    ledcAttach(LED_RED_PIN,   PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttach(LED_GREEN_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
-    ledcAttach(LED_BLUE_PIN,  PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttach(LED1_RED_PIN,   PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttach(LED1_GREEN_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttach(LED1_BLUE_PIN,  PWM_FREQUENCY, PWM_RESOLUTION);
 
+    ledcAttach(LED2_RED_PIN,   PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttach(LED2_GREEN_PIN, PWM_FREQUENCY, PWM_RESOLUTION);
+    ledcAttach(LED2_BLUE_PIN,  PWM_FREQUENCY, PWM_RESOLUTION);
     // Tắt LED lúc khởi động (duty = 0)
     setLedPWM(0, 0, 0);
     Serial.println("[PWM] 3 kênh LED đã khởi tạo (Core 3.x API).");
@@ -341,7 +350,7 @@ void initWiFi() {
     
     wifiMulti.addAP("Phong 1", "11111111");       // Mạng ở nhà
     wifiMulti.addAP("An Lanh", "anlanh123"); 
-     wifiMulti.addAP("VKU_Student", "Vku@2025");              // Mạng ở trường
+    wifiMulti.addAP("VKU_Student", "Vku@2025");              // Mạng ở trường
     wifiMulti.addAP("iPhone_Hotspot", "phatwifi99");     // Mạng phát từ điện thoại
 
     Serial.print("[WiFi] Đang kết nối...");
@@ -397,7 +406,7 @@ void initFirebase() {
     // Rx = 4096 bytes, Tx = 1024 bytes
     fbStream.setBSSLBufferSize(4096, 1024);
     fbSensor.setBSSLBufferSize(4096, 1024);
-    fbRoofStream.setBSSLBufferSize(4096, 1024);
+    fbStream.setBSSLBufferSize(4096, 1024);
     // Chờ token được cấp (tối đa 15 giây)
     Serial.print("[Firebase] Đang chờ token");
     unsigned long t0 = millis();
@@ -427,10 +436,13 @@ void setLedPWM(int r, int g, int b) {
     b = constrain(b, 0, 255);
 
     // ✅ Core 3.x API: ledcWrite(pin, dutyCycle)
-    ledcWrite(LED_RED_PIN,   r);
-    ledcWrite(LED_GREEN_PIN, g);
-    ledcWrite(LED_BLUE_PIN,  b);
-
+    ledcWrite(LED1_RED_PIN,   r);
+    ledcWrite(LED1_GREEN_PIN, g);
+    ledcWrite(LED1_BLUE_PIN,  b);
+    
+    ledcWrite(LED2_RED_PIN,   r);
+    ledcWrite(LED2_GREEN_PIN, g);
+    ledcWrite(LED2_BLUE_PIN,  b);
     // Cập nhật biến lưu màu hiện tại
     ledCurrentR = r;
     ledCurrentG = g;
@@ -730,7 +742,7 @@ void Task_Stream(void* pvParameters) {
     );
 
     //Stream của servo
-    Firebase.RTDB.beginStream(&fbServoStream, PATH_SERVO);
+    Firebase.RTDB.beginStream(&fbServoStream, PATH_ROOF_STREAM);
     Firebase.RTDB.setStreamCallback(&fbServoStream, servoStreamCallback, streamTimeoutCallback);
     Serial.println("[Task_Stream] ✅ Stream đang lắng nghe: " + String(PATH_LED_STREAM));
 
@@ -752,7 +764,7 @@ void Task_Stream(void* pvParameters) {
                 shouldFade = true;
             }
             if (servoNewData){
-                currentAngle= targetAngle
+                currentAngle= targetAngle;
                 servoNewData = false;
                 shouldMoveServo = true;
             }
@@ -789,7 +801,7 @@ void Task_Stream(void* pvParameters) {
                 vTaskDelay(pdMS_TO_TICKS(5000));  // Chờ 5s rồi thử lại
             }
             else {
-                Firebase.RTDB.setStreamCallback(&fbServoStreamStream, servoStreamCallback, streamTimeoutCallback);
+                Firebase.RTDB.setStreamCallback(&fbServoStream, servoStreamCallback, streamTimeoutCallback);
                 Serial.println("[Task_Stream] ✅ Reconnect thành công!");
             }
         }
