@@ -20,11 +20,45 @@ class GuideFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Gán sự kiện click cho Header 1
+
         binding.header1.setOnClickListener {
             toggleSection(binding.content1, binding.arrow1)
         }
 
+        binding.header2.setOnClickListener {
+            toggleSection(binding.content2, binding.arrow2)
+        }
+        binding.header3.setOnClickListener {
+            toggleSection(binding.content3, binding.arrow3)
+        }
+        binding.header4.setOnClickListener {
+            toggleSection(binding.content4, binding.arrow4)
+        }
+        binding.header5.setOnClickListener {
+            toggleSection(binding.content5, binding.arrow5)
+        }
+
+        val floatAnimation = android.animation.ObjectAnimator.ofFloat(
+            binding.tvSpeechBubble, "translationY", 0f, -10f, 0f
+        ).apply {
+            duration = 1500
+            repeatCount = android.animation.ObjectAnimator.INFINITE
+            repeatMode = android.animation.ObjectAnimator.REVERSE
+        }
+        floatAnimation.start()
+
+        // Xử lý xuất hiện fragment chat_bot
+        binding.fabRobot.setOnClickListener {
+            binding.tvSpeechBubble.visibility= View.GONE
+            floatAnimation.cancel()
+
+            val chatBotDialog= ChatBotDialogFragment()
+            chatBotDialog.onDialogDismissed = {
+                binding.tvSpeechBubble.visibility = View.VISIBLE
+                floatAnimation.start()
+            }
+            chatBotDialog.show(parentFragmentManager, "ChatBotDialog")
+        }
     }
 
     private fun toggleSection(contentView: View, arrowView: View) {

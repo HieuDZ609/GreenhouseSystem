@@ -90,32 +90,7 @@
                     app:strokeColor="#CCFFFFFF"
                     app:strokeWidth="1dp">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        android:paddingHorizontal="14dp">
 
-                        <!-- Icon ☀️ hoặc 🌙 — set programmatically -->
-                        <ImageView
-                            android:id="@+id/ivThemeIcon"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:src="@drawable/ic_moon"
-                            android:layout_marginEnd="6dp"
-                            app:tint="#A29BFE"/>
-
-                        <TextView
-                            android:id="@+id/tvThemeLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Dark"
-                            android:textSize="12sp"
-                            android:textColor="#A29BFE"
-                            android:fontFamily="@font/montserrat_bold"/>
-
-                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Notification bell -->
@@ -154,9 +129,9 @@
                 android:layout_marginBottom="16dp"
                 android:alpha="0"
                 android:translationY="30dp"
-                app:cardBackgroundColor="#99FFFFFF"
+                app:cardBackgroundColor="#4DFFFFFF"
                 app:cardCornerRadius="28dp"
-                app:cardElevation="4dp"
+                app:cardElevation="0dp"
                 app:strokeColor="#CCFFFFFF"
                 app:strokeWidth="1.5dp">
 
@@ -269,7 +244,7 @@
                 android:visibility="gone"
                 app:cardBackgroundColor="#80FFE8E2"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
+                app:cardElevation="0dp"
                 app:strokeColor="#80FAB1A0"
                 app:strokeWidth="1.5dp">
 
@@ -325,9 +300,9 @@
                     android:layout_marginEnd="8dp"
                     android:alpha="0"
                     android:translationY="30dp"
-                    app:cardBackgroundColor="#80FFFFFF"
+                    app:cardBackgroundColor="#33FFFFFF"
                     app:cardCornerRadius="28dp"
-                    app:cardElevation="6dp"
+                    app:cardElevation="0dp"
                     app:strokeColor="#CCFFFFFF"
                     app:strokeWidth="1.5dp">
 
@@ -416,9 +391,9 @@
                     android:layout_marginStart="8dp"
                     android:alpha="0"
                     android:translationY="30dp"
-                    app:cardBackgroundColor="#80FFFFFF"
+                    app:cardBackgroundColor="#33FFFFFF"
                     app:cardCornerRadius="28dp"
-                    app:cardElevation="6dp"
+                    app:cardElevation="0dp"
                     app:strokeColor="#CCFFFFFF"
                     app:strokeWidth="1.5dp">
 
@@ -503,9 +478,9 @@
                 android:layout_marginBottom="16dp"
                 android:alpha="0"
                 android:translationY="30dp"
-                app:cardBackgroundColor="#80FFFFFF"
+                app:cardBackgroundColor="#33FFFFFF"
                 app:cardCornerRadius="28dp"
-                app:cardElevation="4dp"
+                app:cardElevation="0dp"
                 app:strokeColor="#CCFFFFFF"
                 app:strokeWidth="1.5dp">
 

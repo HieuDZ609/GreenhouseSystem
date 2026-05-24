@@ -19,7 +19,7 @@
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="24dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF"
             app:strokeWidth="1.5dp">
 

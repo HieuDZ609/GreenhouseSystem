@@ -242,21 +242,11 @@ class ControlFragment : Fragment() {
             val r = binding.sliderRed.value.toInt()
             val g = binding.sliderGreen.value.toInt()
             val b = binding.sliderBlue.value.toInt()
-            // ✅ Gọi SharedDeviceViewModel.applyManualColor()
             sharedViewModel.applyManualColor(r, g, b)
             showSuccessAnimation()
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    //  OBSERVE SharedDeviceViewModel với StateFlow
-    //
-    //  ✅ FIX: Thay viewModel.config.observe() (LiveData) bằng
-    //          collectLatest() từ sharedViewModel.ledStatus (StateFlow).
-    //
-    //  repeatOnLifecycle(STARTED): tự pause khi Fragment bị ẩn,
-    //  resume khi quay lại → tránh memory leak và update thừa.
-    // ─────────────────────────────────────────────────────────────────
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

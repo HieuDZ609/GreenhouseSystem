@@ -91,7 +91,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>       // Mutex (SemaphoreHandle_t)
-
+#include <ESP32Servo.h>
 // Bắt buộc với Firebase ESP Client v4+
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
@@ -104,8 +104,13 @@
 #define FIREBASE_DB_URL      "https://greenhousesystem-97224-default-rtdb.asia-southeast1.firebasedatabase.app/"
 #define FIREBASE_USER_EMAIL  "hieuhdt.24it@vku.udn.vn"
 #define FIREBASE_USER_PASS   "123456"
+// Cấu hình servo và chân trên esp , chân 14
+Servo myServo;
+#define SERVO_PIN 14
 
-
+const char* PATH_ROOF_STREAM = "GreenHouseSystem/devices/servo";
+volatile int targetAngle = 0;
+volatile bool servoNewData = false;
 // ════════════════════════════════════════════════════════════════
 //  📌 GPIO PIN MAPPING
 // ════════════════════════════════════════════════════════════════
@@ -236,6 +241,9 @@ void setup() {
     // ── 5. Firebase ──────────────────────────────────────────────
     initFirebase();
 
+    // Set up servo
+    myServo.attach(SERVO_PIN, 500, 2400); 
+    myServo.write(0);
     // ── 6. Tạo FreeRTOS Tasks ───────────────────────────────────
     /**
      * xTaskCreatePinnedToCore(function, name, stackSize,
@@ -332,7 +340,8 @@ void initWiFi() {
     // Cú pháp: wifiMulti.addAP("Ten_WiFi", "Mat_Khau");
     
     wifiMulti.addAP("Phong 1", "11111111");       // Mạng ở nhà
-    wifiMulti.addAP("An Lanh", "anlanh123");          // Mạng ở trường
+    wifiMulti.addAP("An Lanh", "anlanh123"); 
+     wifiMulti.addAP("VKU_Student", "Vku@2025");              // Mạng ở trường
     wifiMulti.addAP("iPhone_Hotspot", "phatwifi99");     // Mạng phát từ điện thoại
 
     Serial.print("[WiFi] Đang kết nối...");
@@ -388,7 +397,7 @@ void initFirebase() {
     // Rx = 4096 bytes, Tx = 1024 bytes
     fbStream.setBSSLBufferSize(4096, 1024);
     fbSensor.setBSSLBufferSize(4096, 1024);
-
+    fbRoofStream.setBSSLBufferSize(4096, 1024);
     // Chờ token được cấp (tối đa 15 giây)
     Serial.print("[Firebase] Đang chờ token");
     unsigned long t0 = millis();
@@ -569,17 +578,26 @@ void Task_Sensors(void* pvParameters) {
             // In lý do lỗi — có thể là: token expired, network error, path sai...
             Serial.println("[Task_Sensors] ❌ Push thất bại: " + fbSensor.errorReason());
         }
-
-        static unsigned long lastHistoryPush = 0;
-        if (millis() - lastHistoryPush > 900000 || lastHistoryPush == 0) {
+ // Lưu trữ vào sensor history
+        if (historyCounter == 0) { 
+            Serial.println("[Task_Sensors] 📈 Đang tiến hành lưu 1 điểm lịch sử mới (Chu kỳ 15 phút)...");
+            
+            // Sử dụng pushJSON để Firebase tự sinh ra mã ID ngẫu nhiên không trùng lặp (Push ID)
             if (Firebase.RTDB.pushJSON(&fbSensor, "GreenHouseSystem/sensorHistory", &sensorJson)) {
-                Serial.println("[Task_Sensors] 📈 Đã lưu 1 điểm lịch sử mới.");
-                lastHistoryPush = millis();
+                Serial.println("[Task_Sensors] ✅ Đã lưu lịch sử thành công!");
+            } else {
+                Serial.println("[Task_Sensors] ❌ Lưu lịch sử thất bại: " + fbSensor.errorReason());
             }
-        }   
-        // ── Chờ 5 giây (non-blocking) ────────────────────────────
-        // vTaskDelay đặt task vào trạng thái Blocked → CPU chạy task khác
-        // Khác hoàn toàn với delay(5000) — delay() "giữ CPU" (spin-wait)
+        }
+
+        // Tăng bộ đếm vòng lặp
+        historyCounter++;
+        if (historyCounter >= 180) {
+            historyCounter = 0; // Đủ 15 phút thì reset bộ đếm về 0 để vòng lặp sau tự động push
+        }
+
+        // ── 5. ĐỢI CHU KỲ TIẾP THEO (5 Giây) ──────────────────────────────
+        // vTaskDelay giải phóng CPU cho các tác vụ khác chạy, không gây nghẽn core
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 
@@ -619,12 +637,14 @@ void streamCallback(FirebaseStream data) {
         if (json.get(result, "red"))   lastR = result.to<int>();
         if (json.get(result, "green")) lastG = result.to<int>();
         if (json.get(result, "blue"))  lastB = result.to<int>();
-
+        // Từ gói json tách lấy trường status của servo
         // 3. Tính toán Target thực tế dựa trên trạng thái Bật/Tắt
         // Nếu OnStatus là true -> lấy màu trong bộ nhớ. Nếu false -> về 0.
         int targetR = lastOnStatus ? lastR : 0;
         int targetG = lastOnStatus ? lastG : 0;
         int targetB = lastOnStatus ? lastB : 0;
+        // Tính toán quy đổi góc
+
 
         Serial.printf("[LOG] Trạng thái: %s | Màu ghi nhớ: (%d,%d,%d) | Mục tiêu LED: (%d,%d,%d)\n",
                       lastOnStatus ? "BẬT" : "TẮT", 
@@ -643,7 +663,26 @@ void streamCallback(FirebaseStream data) {
     }
 }
 
+void servoStreamCallback(FirebaseStream data) {
+    if (data.dataType() == "json") {
+        FirebaseJson &json = data.jsonObject();
+        FirebaseJsonData result;
 
+        // Giả sử trên Firebase biến của bạn tên là "status"
+        if (json.get(result, "status")) {
+            bool isOpen = result.to<bool>();
+            int angle = isOpen ? 180 : 0;
+            
+            Serial.printf("[Stream] Servo: %s -> Góc %d độ\n", isOpen ? "MỞ" : "ĐÓNG", angle);
+
+            if (xSemaphoreTake(ledMutex, pdMS_TO_TICKS(20)) == pdTRUE) {
+                targetAngle  = angle;
+                servoNewData = true; // Chỉ bật cờ cho Servo
+                xSemaphoreGive(ledMutex);
+            }
+        }
+    }
+}
 // ════════════════════════════════════════════════════════════════
 //  streamTimeoutCallback — Gọi khi Stream bị timeout/ngắt kết nối
 //
@@ -690,6 +729,9 @@ void Task_Stream(void* pvParameters) {
         streamTimeoutCallback     // Gọi khi timeout/ngắt kết nối
     );
 
+    //Stream của servo
+    Firebase.RTDB.beginStream(&fbServoStream, PATH_SERVO);
+    Firebase.RTDB.setStreamCallback(&fbServoStream, servoStreamCallback, streamTimeoutCallback);
     Serial.println("[Task_Stream] ✅ Stream đang lắng nghe: " + String(PATH_LED_STREAM));
 
     // Biến local để tránh giữ mutex trong khi fade
@@ -698,7 +740,7 @@ void Task_Stream(void* pvParameters) {
     for (;;) {
         // ── Kiểm tra có lệnh LED mới không ───────────────────────
         bool shouldFade = false;
-
+        bool shouldMoveServo = false;
         // Timeout 5ms để không block vòng lặp quá lâu
         if (xSemaphoreTake(ledMutex, pdMS_TO_TICKS(5)) == pdTRUE) {
             if (ledNewData) {
@@ -709,12 +751,20 @@ void Task_Stream(void* pvParameters) {
                 ledNewData = false;    // Reset flag
                 shouldFade = true;
             }
+            if (servoNewData){
+                currentAngle= targetAngle
+                servoNewData = false;
+                shouldMoveServo = true;
+            }
             xSemaphoreGive(ledMutex);
             // ↑ QUAN TRỌNG: Release mutex TRƯỚC KHI gọi smoothFadeTo()
             //   vì smoothFadeTo() mất 500ms và sẽ cần mutex bên trong
         }
 
         // ── Fade LED (ngoài vùng mutex) ───────────────────────────
+        if (shouldMoveServo) {
+            myServo.write(currentAngle);
+        }
         if (shouldFade) {
             smoothFadeTo(fadeR, fadeG, fadeB);
         }
@@ -729,6 +779,17 @@ void Task_Stream(void* pvParameters) {
                 vTaskDelay(pdMS_TO_TICKS(5000));  // Chờ 5s rồi thử lại
             } else {
                 Firebase.RTDB.setStreamCallback(&fbStream, streamCallback, streamTimeoutCallback);
+                Serial.println("[Task_Stream] ✅ Reconnect thành công!");
+            }
+        }
+        if (!fbServoStream.httpConnected()) {
+            Serial.println("[Task_Stream] 🔄 Stream mất kết nối. Đang reconnect...");
+            if (!Firebase.RTDB.beginStream(&fbServoStream, PATH_ROOF_STREAM)) {
+                Serial.println("[Task_Stream] ❌ Reconnect thất bại: " + fbStream.errorReason());
+                vTaskDelay(pdMS_TO_TICKS(5000));  // Chờ 5s rồi thử lại
+            }
+            else {
+                Firebase.RTDB.setStreamCallback(&fbServoStreamStream, servoStreamCallback, streamTimeoutCallback);
                 Serial.println("[Task_Stream] ✅ Reconnect thành công!");
             }
         }

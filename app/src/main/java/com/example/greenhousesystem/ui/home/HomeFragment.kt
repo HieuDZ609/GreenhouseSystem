@@ -1,13 +1,16 @@
 package com.example.greenhousesystem.ui.home
 
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,16 +24,14 @@ import com.example.greenhousesystem.model.PlantProfile
 import com.example.greenhousesystem.ui.SharedDeviceViewModel
 import com.example.greenhousesystem.ui.animation.AnimationHelper
 import com.example.greenhousesystem.ui.animation.AnimationHelper.setupSpringPress
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// ═══════════════════════════════════════════════════════════
-//  HomeFragment — "Smart Oasis" Dashboard (Soft Sunset Theme)
-//  Tích hợp Glassmorphism, RenderEffect Blur và Visual Color Coding.
-// ═══════════════════════════════════════════════════════════
+
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -38,7 +39,7 @@ class HomeFragment : Fragment() {
 
     // Sử dụng chung ViewModel với Activity để đồng bộ dữ liệu
     private val sharedViewModel: SharedDeviceViewModel by activityViewModels()
-
+    private val auth = FirebaseAuth.getInstance()
     private var isUpdatingSwitch = false
     private var wasOnline = false
 
@@ -52,12 +53,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        applyGlassBlur() // Bật hiệu ứng mờ kính cho các Card
+       // applyGlassBlur() // Bật hiệu ứng mờ kính cho các Card
         setupEntrance()
         setupSwipeRefresh()
         setupLedSwitch()
         setupSpringButtons()
         observeViewModel()
+        checkAndAskPermission()
     }
 
     // ─────────────────────────────────────────────────────────
@@ -277,7 +279,37 @@ class HomeFragment : Fragment() {
         if (timestamp == 0L) return "--"
         return SimpleDateFormat("HH:mm:ss dd/MM", Locale.getDefault()).format(Date(timestamp))
     }
-
+    // Hàm gửi thông báo xác nhận hay từ chối
+    private val requestUserPermissionNotification = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+            isGranted : Boolean ->
+        val userId= auth.currentUser?.uid
+        if (isGranted && userId !=null){
+            sharedViewModel.syncFcmToken()
+        }
+        else {
+            Log.d("FCM_PERMISSION", "Người dùng từ chối")
+        }
+    }
+    // Hàm kiểm tra trước đây người dùng đã xác nhận cấp quyền cho fcmToken
+    private fun checkAndAskPermission () {
+        if (auth.currentUser == null) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                sharedViewModel.syncFcmToken()
+            } else {
+                requestUserPermissionNotification.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+        else {
+            sharedViewModel.syncFcmToken()
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding?.viewLedColor?.clearAnimation()

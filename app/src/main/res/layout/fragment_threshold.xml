@@ -27,7 +27,7 @@
                 android:layout_width="40dp" android:layout_height="40dp"
                 android:layout_marginEnd="12dp" android:clickable="true" android:focusable="true"
                 app:cardBackgroundColor="#66FFFFFF" app:cardCornerRadius="12dp"
-                app:cardElevation="2dp" app:strokeColor="#CCFFFFFF" app:strokeWidth="1dp">
+                app:cardElevation="0dp" app:strokeColor="#CCFFFFFF" app:strokeWidth="1dp">
                 <ImageView android:layout_width="20dp" android:layout_height="20dp"
                     android:layout_gravity="center" android:src="@drawable/ic_back"
                     app:tint="#636E72"/>
@@ -48,7 +48,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" app:cardBackgroundColor="#80FFFFFF"
-            app:cardCornerRadius="20dp" app:cardElevation="2dp"
+            app:cardCornerRadius="20dp" app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF" app:strokeWidth="1.5dp">
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginBottom="16dp" app:cardBackgroundColor="#80FFFFFF"
-            app:cardCornerRadius="24dp" app:cardElevation="4dp"
+            app:cardCornerRadius="24dp" app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF" app:strokeWidth="1.5dp">
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginBottom="24dp" app:cardBackgroundColor="#80FFFFFF"
-            app:cardCornerRadius="24dp" app:cardElevation="4dp"
+            app:cardCornerRadius="24dp" app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF" app:strokeWidth="1.5dp">
 
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"

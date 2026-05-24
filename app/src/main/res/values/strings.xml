@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">GreenhouseSystem</string>
+    <string name="security_monitoring">Cơ chế giám sát thông minh hoạt động liên tục:\n\n• Mã màu cảnh báo: Viền Soft Rose (Đỏ hồng) báo lỗi nhiệt độ; Viền Soft Blue (Xanh dương) báo lỗi độ ẩm; Viền Cam hoàng hôn báo lỗi nghiêm trọng cả hai thông số.\n• Tương tác: Bạn có thể vuốt ngang một thẻ thông báo kính mờ để xóa nhanh khỏi danh sách.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

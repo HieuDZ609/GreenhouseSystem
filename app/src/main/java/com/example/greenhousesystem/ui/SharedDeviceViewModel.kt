@@ -302,7 +302,23 @@ class SharedDeviceViewModel : ViewModel() {
         db.child("users").child(uid).child("selectedPlant").setValue(plantId)
         // Listener sẽ tự gọi loadPlantProfile → cập nhật _selectedPlant và _thresholds
     }
+    // Hàm xử lý fcmToken và luu lên database
+    fun syncFcmToken (){
+        val currentUserId = auth.currentUser?.uid ?:return
 
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+            .addOnCompleteListener {
+                task ->
+                    if (!task.isSuccessful) return@addOnCompleteListener
+                    val token = task.result ?:return@addOnCompleteListener
+
+                db.child("users").child(currentUserId).child("fcmToken")
+                    .child(token).setValue(true)
+                    .addOnSuccessListener {
+                        Log.d("FCM_SHARE", "Tích hợp FCM Token thành công")
+                    }
+            }
+    }
     // ─────────────────────────────────────────────────────────────────────
     //  CLEANUP — Remove tất cả listeners khi ViewModel bị destroy
     // ─────────────────────────────────────────────────────────────────────

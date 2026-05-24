@@ -52,7 +52,6 @@ class AlertWorker(
     // SharedPreferences để lưu thời điểm gửi cảnh báo cuối (chống spam)
     private val prefs = context.getSharedPreferences("alert_cooldown", Context.MODE_PRIVATE)
 
-    // Cooldown 30 phút (ms) — không gửi cùng loại cảnh báo trong khoảng này
     private val cooldownMs = 30 * 60 * 1000L
 
     companion object {
@@ -213,15 +212,7 @@ class AlertWorker(
         }
     }
 
-    /**
-     * sendAlert — Ghi thông báo vào Firebase và trigger local notification.
-     *
-     * Cooldown check: Nếu cùng loại alertKey đã gửi trong [cooldownMs] → skip.
-     * Điều này tránh spam khi sensor liên tục ở mức cảnh báo.
-     *
-     * Firebase path: GreenHouseSystem/notifications/$uid/$newKey
-     * NotificationViewModel đọc path này qua ValueEventListener.
-     */
+
     private suspend fun sendAlert(
         uid: String, alertKey: String,
         title: String, message: String,
@@ -248,14 +239,9 @@ class AlertWorker(
         )
         ref.setValue(data).await()
 
-        // Trigger local notification để user thấy kể cả khi app đóng
         showLocalNotification(title, message, type)
     }
 
-    /**
-     * showLocalNotification — Hiện Android notification trên status bar.
-     * Intent mở app và navigate đến NotificationFragment khi user tap.
-     */
     private fun showLocalNotification(title: String, message: String, type: String) {
         ensureNotificationChannel()
 
@@ -296,7 +282,6 @@ class AlertWorker(
         manager.notify(type.hashCode(), notification)
     }
 
-    /** ensureNotificationChannel — Tạo channel cho Android O+ nếu chưa có. */
     private fun ensureNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

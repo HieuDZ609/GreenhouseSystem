@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_sunset_gradient">
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -42,7 +48,7 @@
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF"
             app:strokeWidth="1.5dp">
 
@@ -113,7 +119,7 @@
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF"
             app:strokeWidth="1.5dp">
 
@@ -140,7 +146,7 @@
                         android:text="⚙️ 2. Ngưỡng cảnh báo"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="#2D3436"
+                        android:textColor="#C0C0C0"
                         android:fontFamily="@font/montserrat_bold"/>
 
                     <ImageView
@@ -184,7 +190,7 @@
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF"
             app:strokeWidth="1.5dp">
 
@@ -255,7 +261,7 @@
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF"
             app:strokeWidth="1.5dp">
 
@@ -326,7 +332,7 @@
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="#80FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeColor="#CCFFFFFF"
             app:strokeWidth="1.5dp">
 
@@ -382,7 +388,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Cơ chế giám sát thông minh hoạt động liên tục:\n\n• Mã màu cảnh báo: Viền Soft Rose (Đỏ hồng) báo lỗi nhiệt độ; Viền Soft Blue (Xanh dương) báo lỗi độ ẩm; Viền Cam hoàng hôn báo lỗi nghiêm trọng cả hai thông số.\n• Tương tác: Bạn có thể vuốt ngang một thẻ thông báo kính mờ để xóa nhanh khỏi danh sách."
+                        android:text="@string/security_monitoring"
                         android:textSize="13sp"
                         android:textColor="#636E72"
                         android:lineSpacingMultiplier="1.4"
@@ -393,3 +399,31 @@
 
     </LinearLayout>
 </ScrollView>
+    <TextView
+        android:id="@+id/tvSpeechBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thông tin không rõ\nHỏi mình nha! "
+        android:textColor="#E4DFDF"
+        android:textSize="12sp"
+        android:fontFamily="@font/montserrat_medium"
+        android:background="@drawable/bg_speech_bubble"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:elevation="6dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fabRobot"
+        app:layout_constraintTop_toTopOf="@+id/fabRobot"
+        app:layout_constraintEnd_toStartOf="@+id/fabRobot" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabRobot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="90dp"
+        android:src="@drawable/ic_robot"
+        app:tint="@android:color/white"
+        app:backgroundTint="#A29BFE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

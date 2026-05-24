@@ -136,7 +136,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="#80FFFFFF"
                 app:cardCornerRadius="28dp"
-                app:cardElevation="4dp"
+                app:cardElevation="0dp"
                 app:strokeColor="#CCFFFFFF"
                 app:strokeWidth="1.5dp">
 
@@ -180,13 +180,13 @@
                         android:layout_height="200dp"
                         android:visibility="visible"
                         app:shimmer_base_color="#33A29BFE"
-                        app:shimmer_highlight_color="#80FFFFFF"
+                        app:shimmer_highlight_color="#33FFFFFF"
                         app:shimmer_auto_start="true">
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:background="@drawable/bg_shimmer_rect_light"/>
+                            android:background="#22FFFFFF" />
 
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -252,7 +252,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="#80FFFFFF"
                 app:cardCornerRadius="28dp"
-                app:cardElevation="4dp"
+                app:cardElevation="0dp"
                 app:strokeColor="#CCFFFFFF"
                 app:strokeWidth="1.5dp">
 
@@ -296,10 +296,10 @@
                         android:layout_height="200dp"
                         android:visibility="visible"
                         app:shimmer_base_color="#3374B9FF"
-                        app:shimmer_highlight_color="#80FFFFFF"
+                        app:shimmer_highlight_color="#33FFFFFF"
                         app:shimmer_auto_start="true">
                         <View android:layout_width="match_parent" android:layout_height="200dp"
-                            android:background="@drawable/bg_shimmer_rect_light"/>
+                            android:background="#22FFFFFF"/>
                     </com.facebook.shimmer.ShimmerFrameLayout>
 
                     <com.github.mikephil.charting.charts.LineChart

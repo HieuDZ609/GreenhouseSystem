@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="6dp">
+
+    <LinearLayout
+        android:id="@+id/layoutAiMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start|top"
+        android:visibility="visible">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            app:cardCornerRadius="14dp"
+            app:cardBackgroundColor="#A29BFE"
+            app:cardElevation="0dp"
+            android:layout_marginEnd="8dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_robot"
+                android:padding="4dp"
+                app:tint="@color/white"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvAiMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chat_ai"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="Xin chào! Mình là AI hỗ trợ."
+            android:textColor="#2D3436"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginEnd="40dp" /> </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutUserMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end|top"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvUserMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chat_user"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp"
+            android:text="Tôi muốn hỏi về cách bật đèn?"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginStart="40dp" /> </LinearLayout>
+
+</LinearLayout>
